@@ -10,6 +10,8 @@ const routes: Routes = [
   {path: '', redirectTo: 'login', pathMatch: 'prefix'},
   {path: 'login', component: LoginComponent, canActivate: [UnauthGuard]},
   {path: 'logout', component: LogoutComponent, canActivate: [AuthGuard]},
+  {path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
+
 
 
 ];

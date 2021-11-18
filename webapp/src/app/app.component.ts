@@ -27,9 +27,6 @@ export class AppComponent extends SubscriberContextComponent implements OnInit {
   displayedItems: ListItem[] = [
     {name: 'Login', url: '/login', needsAuthorization: false},
     {name: 'Home', url: '/home', needsAuthorization: true},
-    {name: 'Processi', url: '/processes', needsAuthorization: true},
-    {name: 'Impostazioni', url: '/settings', needsAuthorization: true},
-    {name: 'Qr', url: '/qr', needsAuthorization: true},
     {name: 'Logout', url: '/logout', needsAuthorization: true},
 
   ];
