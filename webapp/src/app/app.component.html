@@ -1,0 +1,25 @@
+<mat-toolbar color="primary">
+  <button mat-icon-button (click)="drawer.toggle()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  Webapp
+</mat-toolbar>
+<mat-drawer-container autosize class="drawer-container mat-elevation-z4">
+  <mat-drawer #drawer mode="side" [mode]="sidenavMode" [opened]="startOpened">
+    <mat-list>
+      <div class="cont" *ngFor="let toDisplay of displayedItems; let last=last">
+
+        <mat-list-item [routerLink]="toDisplay.url" matRipple
+                       *ngIf="this.isAuthenticated===toDisplay.needsAuthorization">
+          {{toDisplay.name}}
+          <mat-divider *ngIf="!last"></mat-divider>
+        </mat-list-item>
+      </div>
+    </mat-list>
+
+
+  </mat-drawer>
+  <router-outlet style="margin-bottom: 25px"></router-outlet>
+
+</mat-drawer-container>
+

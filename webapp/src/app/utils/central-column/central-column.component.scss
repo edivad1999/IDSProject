@@ -1,0 +1,27 @@
+.central-column {
+  display: flex;
+  justify-content: center;
+}
+
+.max-width {
+  width: 100%;
+}
+
+.content-container {
+  max-width: 1096px;
+  align-self: center;
+}
+
+.content-container-width {
+  margin: 56px;
+}
+
+.content-container-width-small {
+  margin: 16px;
+}
+
+@media screen and (max-width: 600px) {
+  .content-container-width {
+    margin: 16px;
+  }
+}

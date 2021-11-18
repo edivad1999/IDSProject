@@ -1,0 +1,32 @@
+.drawer-container {
+  width: 100%;
+}
+
+@media screen and (max-width: 599px) {
+  .drawer-container {
+    height: calc(100vh - 56px);
+  }
+}
+
+@media screen and (min-width: 599px) {
+  .drawer-container {
+    height: calc(100vh - 64px);
+  }
+}
+
+.cont {
+  margin-left: 20px;
+  margin-right: 20px;
+
+}
+
+mat-list-item {
+  cursor: pointer;
+}
+
+mat-icon {
+  user-select: none;
+
+}
+
+

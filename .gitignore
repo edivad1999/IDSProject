@@ -1,0 +1,9 @@
+# Project exclude paths
+/.gradle/
+/backend/build/
+/local.properties
+/backend/databases/
+/.idea/
+
+# Project exclude paths
+/postgres-data/

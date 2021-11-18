@@ -1,0 +1,11 @@
+<div class="central-column">
+  <div
+    [ngClass]="{
+    'max-width': stretchWidth,
+    'content-container-width-small' : hasSmallBorders,
+    'content-container-width' : !hasSmallBorders
+    }"
+    class="content-container">
+    <ng-content></ng-content>
+  </div>
+</div>

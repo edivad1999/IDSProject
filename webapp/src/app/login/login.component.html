@@ -1,0 +1,39 @@
+<h1>Accedi</h1>
+<div style="width: 100%; display: flex; justify-content: center">
+  <form [formGroup]="loginFormGroup" style="display: flex; flex-direction: column">
+    <mat-form-field appearance="outline">
+      <mat-label>Username</mat-label>
+      <label>
+        <input #emailInput [formControl]="usernameControl" matInput
+               type="username" (change)="usernameChange.emit(emailInput.value)">
+      </label>
+      <mat-error *ngIf="usernameControl.hasError('required')">
+        L' username è <strong>necessario</strong>
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Password</mat-label>
+      <mat-icon (click)="pdwInput.type = pdwInput.type == 'password' ? 'text' : 'password'" class="hoverable"
+                matSuffix>{{pdwInput.type != 'password' ? 'visibility_off' : 'visibility'}}</mat-icon>
+      <label>
+        <input #pdwInput [formControl]="passwordControl" autocomplete="current-password" matInput type="password"
+               (change)="passwordChange.emit(pdwInput.value)">
+      </label>
+      <mat-error *ngIf="passwordControl.hasError('required')">
+        La password è <strong>necessaria</strong>
+      </mat-error>
+      <mat-error *ngIf="passwordControl.hasError('minlength')">
+        Sicuro di aver scritto bene?
+      </mat-error>
+    </mat-form-field>
+    <div class="centrator-container">
+      <button (click)="login()"
+              [disabled]="authState != 'UNAUTHENTICATED' || loginFormGroup.invalid"
+              color="primary"
+              mat-raised-button>
+        Login
+      </button>
+    </div>
+  </form>
+</div>
+<ng-content></ng-content>
