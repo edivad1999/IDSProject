@@ -11,12 +11,12 @@ import java.util.*
 
 class UserAuth(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<UserAuth>(
-        UserAuthTable
+        UsersTable
     )
 
-    var username by UserAuthTable.username
-    var hashPass by UserAuthTable.hashPass
-    var role by UserAuthTable.role
+    var username by UsersTable.username
+    var hashPass by UsersTable.hashPass
+    var role by UsersTable.role
 
     fun getRole(): Role = Role.valueOf(role)
 

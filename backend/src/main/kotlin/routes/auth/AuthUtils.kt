@@ -69,7 +69,7 @@ class MyJWTCredentialVerifier(override val di: DI) : JWTCredentialsVerifier, DIA
 }
 
 enum class Role {
-    USER, ADMIN
+    CLIENT, KITCHEN, WAITER, MANAGER
 }
 
 data class BasePrincipal(val userId: String, val role: Role) : Principal

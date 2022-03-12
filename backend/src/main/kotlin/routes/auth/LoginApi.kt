@@ -38,7 +38,7 @@ fun Route.loginApi() = route("login") {
         }
         var failureReason = "username not found"
         val token = transaction(db) {
-            UserAuth.find { UserAuthTable.username eq email }
+            UserAuth.find { UserAuth.username eq email }
                 .limit(1)
                 .firstOrNull()
                 ?.let {
