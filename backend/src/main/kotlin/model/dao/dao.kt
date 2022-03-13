@@ -105,4 +105,10 @@ class MenuElementEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
 
 }
 
+
+// TODO Ho dimenticato stato piatto ovunque
+enum class DishState{
+    WAITING, PREPARING, DELIVERED, PROBLEM
+}
+
 fun String.toUUID(): UUID = UUID.fromString(this)
