@@ -47,11 +47,11 @@ object DishesTable : UUIDTable("dishes", "uuid") {
     val relatedCourse = reference("relatedCourse", BillsTable)
     val relatedClient = reference("relatedClient", UsersTable).nullable()
     val notes = varchar("notes", 600)
-    val menuElement = reference("menuElement", MenuElement)
+    val menuElement = reference("menuElement", MenuElementTable)
 
 }
 
-object MenuElement : UUIDTable("menu_elements", "uuid") {
+object MenuElementTable : UUIDTable("menu_elements", "uuid") {
     val name = varchar("name", 600)
     val ingredients = varchar("ingredients", 600)
     val description = varchar("description", 600)

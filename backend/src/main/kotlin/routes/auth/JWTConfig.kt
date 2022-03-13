@@ -3,7 +3,7 @@ package routes.auth
 import com.auth0.jwt.*
 import com.auth0.jwt.algorithms.*
 import kotlinx.serialization.Serializable
-import model.dao.User
+import model.dao.UserEntity
 import java.util.*
 
 object JwtConfig {
@@ -21,7 +21,7 @@ object JwtConfig {
     /**
      * Produce a token for this combination of User and Account
      */
-    fun makeToken(user: User): AuthTokenResponseData {
+    fun makeToken(user: UserEntity): AuthTokenResponseData {
         val exp = getExpiration()
         val jwt = JWT.create()
             .withSubject("Authentication")

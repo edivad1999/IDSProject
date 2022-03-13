@@ -7,7 +7,7 @@ import io.ktor.http.*
 import io.ktor.routing.*
 import io.ktor.serialization.*
 import kotlinx.coroutines.launch
-import model.dao.User
+import model.dao.UserEntity
 import model.tables.UsersTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -78,11 +78,11 @@ fun Application.initDb() = launch {
     transaction(db) {
         SchemaUtils.createMissingTablesAndColumns(UsersTable)
 
-        val admin = User.find {
+        val admin = UserEntity.find {
             UsersTable.username eq "admin"
         }
         if (admin.empty()) {
-            User.new {
+            UserEntity.new {
                 username = "admin"
                 hashPass = digester.digest("password")
             }

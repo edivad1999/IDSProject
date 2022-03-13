@@ -5,7 +5,7 @@ import io.ktor.auth.*
 import io.ktor.auth.jwt.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.toJavaInstant
-import model.dao.User
+import model.dao.UserEntity
 import model.tables.UsersTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -59,7 +59,7 @@ class MyJWTCredentialVerifier(override val di: DI) : JWTCredentialsVerifier, DIA
         if (expiresAt.isBefore(Clock.System.now().toJavaInstant())) return null
         val db: Database by instance()
         val user = transaction(db) {
-            User.find {
+            UserEntity.find {
                 UsersTable.username eq username
             }.firstOrNull()
         }
