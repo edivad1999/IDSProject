@@ -8,8 +8,8 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import kotlinx.serialization.Serializable
-import model.dao.UserAuth
-import model.tables.UserAuthTable
+import model.dao.User
+import model.tables.UsersTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 import routes.ErrorMessageResponse
@@ -38,7 +38,7 @@ fun Route.loginApi() = route("login") {
         }
         var failureReason = "username not found"
         val token = transaction(db) {
-            UserAuth.find { UserAuth.username eq email }
+            User.find { UsersTable.username eq email }
                 .limit(1)
                 .firstOrNull()
                 ?.let {

@@ -8,7 +8,7 @@ import routes.authenticate
 
 fun Route.verifierJWTApi() = route("verifyToken") {
 
-    authenticate(Role.USER) {
+    authenticate(Role.CLIENT) {
         get {
             call.respond(HttpStatusCode.OK)
         }
