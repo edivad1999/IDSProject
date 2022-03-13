@@ -1,6 +1,5 @@
 package model.tables
 
-import model.tables.BillsTable.nullable
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.Table
 import routes.auth.Role
@@ -21,7 +20,7 @@ object BillsTable : UUIDTable("bills", "uuid") {
     val coveredNumbers = integer("coveredNumbers")
     val openedAt = long("openedAt")
     val closedAt = long("closedAt").nullable()
-    val associatedTable = reference("associatedTable", TablesTable) //Così si mappa la 1 a n di tavoli conti // se si decidesse di rendere opzionale la referenza si può mettere nullable
+    val relatedTable = reference("relatedTable", TablesTable) //Così si mappa la 1 a n di tavoli conti // se si decidesse di rendere opzionale la referenza si può mettere nullable
 }
 
 object UsersBillsTable : Table("users-bills") {
@@ -36,10 +35,25 @@ object TablesTable : UUIDTable("tables", "uuid") {
 }
 
 object CoursesTable : UUIDTable("courses", "uuid") {
-    val associatedBill = reference("associatedBill", BillsTable)
-    val isSpedita=bool("isSpedita")
+    val relatedBill = reference("relatedBill", BillsTable)
+    val isSpedita = bool("isSpedita")
     val speditaAt = long("speditaAt").nullable()
-    val readyClients = varchar("readyClients",37001 )
-        // stiamo settando un limite di circa 1000 massimi pronti  idealmente si potrebbe fare una table di mapping
+    val readyClients = varchar("readyClients", 37001).nullable()
+    // stiamo settando un limite di circa 1000 massimi pronti  idealmente si potrebbe fare una table di mapping
 
+}
+
+object DishesTable : UUIDTable("dishes", "uuid") {
+    val relatedCourse = reference("relatedCourse", BillsTable)
+    val relatedClient = reference("relatedClient", UsersTable).nullable()
+    val notes = varchar("notes", 600)
+    val menuElement = reference("menuElement", MenuElement)
+
+}
+
+object MenuElement : UUIDTable("menu_elements", "uuid") {
+    val name = varchar("name", 600)
+    val ingredients = varchar("ingredients", 600)
+    val description = varchar("description", 600)
+    val price = float("price")
 }
