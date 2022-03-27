@@ -65,7 +65,7 @@ fun Application.managerModule() {
         route("api") {
             loginApi()
             verifierJWTApi()
-            clientiApi()
+            clientsApi()
 
         }
     }

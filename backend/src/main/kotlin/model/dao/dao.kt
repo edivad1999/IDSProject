@@ -1,9 +1,11 @@
 package model.dao
 
+import model.dataClasses.*
 import model.tables.*
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
+import org.jetbrains.exposed.sql.insert
 import routes.auth.Role
 import java.util.*
 
@@ -26,6 +28,7 @@ class UserEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
         if (uuid != null) billHistory.firstOrNull { it.id.value == uuid && it.closedAt == null } else billHistory.sortedBy { it.openedAt }.firstOrNull { it.closedAt == null }
 
 
+    fun serialize() = User(username = this.username, role = this.getRole(), email = this.email, this.billHistory.toList().map { it.serialize() })
 }
 
 /**
@@ -39,34 +42,58 @@ class SimpleUserEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     var role by UsersTable.role
     var email by UsersTable.email
     fun getRole(): Role = Role.valueOf(role)
+    fun serialize() = SimpleUser(username = this.username, role = this.getRole(), email = this.email)
+
 
 }
 
 class BillEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     companion object : UUIDEntityClass<BillEntity>(BillsTable)
 
+    var billId = this.id
     var secretCode by BillsTable.secretCode
     var coveredNumbers by BillsTable.coveredNumbers
     var openedAt by BillsTable.openedAt
     var closedAt by BillsTable.closedAt
     var relatedTable by TableEntity referencedOn BillsTable.relatedTable
     var users by SimpleUserEntity via UsersBillsTable
+    var courses by CourseEntity via CoursesTable
+    fun serialize() = Bill(secretCode = secretCode,
+        coveredNumbers = coveredNumbers,
+        openedAt = openedAt,
+        closedAt = closedAt,
+        relatedTable = this.relatedTable.serialize(),
+        users = users.map { it.serialize() },
+        courses = courses.map { it.serialize() })
+
+    fun addUser(userId: UUID, code: String) = UserEntity.findById(userId)!!.takeIf { it.getCurrentOpenBill(this.id.value) == null }.let { user ->
+        if (user != null && secretCode == code) {
+            UsersBillsTable.insert {
+                it[UsersBillsTable.user] = user.id
+                it[UsersBillsTable.bill] = billId.value
+            }
+            true
+        } else false
+    }
 
 
 }
+
 
 class TableEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     companion object : UUIDEntityClass<TableEntity>(TablesTable)
 
     var number by TablesTable.number
     var isOccupied by TablesTable.isOccupied
-//    val billHistory by BillEntity referrersOn BillsTable.relatedTable crea un ciclo
 
+    //    val billHistory by BillEntity referrersOn BillsTable.relatedTable crea un ciclo
+    fun serialize() = Table(number = number, isOccupied = isOccupied)
 }
 
 class CourseEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
 
     companion object : UUIDEntityClass<CourseEntity>(CoursesTable)
+
     var isSent by CoursesTable.isSpedita
     var sentAt by CoursesTable.speditaAt
     private var readyClients by CoursesTable.readyClients //È privato perché ci si accede con le funzioni e non va mai toccato a mano
@@ -83,6 +110,9 @@ class CourseEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
             setReadyClients(getReadyClients().toMutableList().apply { this.add(user) })
         }
     }
+
+
+    fun serialize() = Course(isSent = isSent, sentAt = sentAt, readyClients = getReadyClients().map { it.serialize() }, dishes = dishes.map { it.serialize() })
 }
 
 class DishEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
@@ -91,7 +121,9 @@ class DishEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     var notes by DishesTable.notes
     val relatedClient by SimpleUserEntity optionalBackReferencedOn DishesTable.relatedClient
     val menuElement by MenuElementEntity referencedOn DishesTable.menuElement
-
+    private val state by DishesTable.state
+    fun getState() = DishState.valueOf(state)
+    fun serialize() = Dish(notes = notes, relatedClient = relatedClient?.serialize(), menuElement = menuElement.serialize(), state = getState())
 
 }
 
@@ -102,12 +134,12 @@ class MenuElementEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     var ingredients by MenuElementTable.ingredients
     var description by MenuElementTable.description
     var price by MenuElementTable.price
+    fun serialize() = MenuElement(name = name, ingredients = ingredients, description = description, price = price)
 
 }
 
 
-// TODO Ho dimenticato stato piatto ovunque
-enum class DishState{
+enum class DishState {
     WAITING, PREPARING, DELIVERED, PROBLEM
 }
 

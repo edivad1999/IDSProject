@@ -13,6 +13,7 @@ object UsersTable : UUIDTable("users", "uuid") {
     val hashPass = varchar("password", 200)
     val role = varchar("role", 50).default(Role.CLIENT.name)
     val email = varchar("email", 50).uniqueIndex()
+
 }
 
 object BillsTable : UUIDTable("bills", "uuid") {
@@ -24,8 +25,8 @@ object BillsTable : UUIDTable("bills", "uuid") {
 }
 
 object UsersBillsTable : Table("users-bills") {
-    private val user = reference("user", UsersTable)
-    private val bill = reference("bill", BillsTable)
+     val user = reference("user", UsersTable)
+     val bill = reference("bill", BillsTable)
     override val primaryKey = PrimaryKey(user, bill)
 }
 
@@ -48,6 +49,7 @@ object DishesTable : UUIDTable("dishes", "uuid") {
     val relatedClient = reference("relatedClient", UsersTable).nullable()
     val notes = varchar("notes", 600)
     val menuElement = reference("menuElement", MenuElementTable)
+    val state = varchar("state", 200)
 
 }
 
