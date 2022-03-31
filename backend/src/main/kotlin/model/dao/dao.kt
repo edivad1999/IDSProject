@@ -93,7 +93,7 @@ class TableEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
 class CourseEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
 
     companion object : UUIDEntityClass<CourseEntity>(CoursesTable)
-
+    var relatedBillID by CoursesTable.relatedBill
     var isSent by CoursesTable.isSpedita
     var sentAt by CoursesTable.speditaAt
     private var readyClients by CoursesTable.readyClients //È privato perché ci si accede con le funzioni e non va mai toccato a mano
@@ -119,11 +119,12 @@ class DishEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     companion object : UUIDEntityClass<DishEntity>(DishesTable)
 
     var notes by DishesTable.notes
-    val relatedClient by SimpleUserEntity optionalBackReferencedOn DishesTable.relatedClient
-    val menuElement by MenuElementEntity referencedOn DishesTable.menuElement
-    private val state by DishesTable.state
+    var relatedClient by SimpleUserEntity optionalReferencedOn DishesTable.relatedClient
+    var menuElement by MenuElementEntity referencedOn DishesTable.menuElement
+     var state by DishesTable.state
+    var relatedCourseID by DishesTable.relatedCourse
     fun getState() = DishState.valueOf(state)
-    fun serialize() = Dish(notes = notes, relatedClient = relatedClient?.serialize(), menuElement = menuElement.serialize(), state = getState())
+    fun serialize() = Dish(uuid=id.value.toString(),notes = notes, relatedClient = relatedClient?.serialize(), menuElement = menuElement.serialize(), state = getState())
 
 }
 
@@ -134,7 +135,8 @@ class MenuElementEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     var ingredients by MenuElementTable.ingredients
     var description by MenuElementTable.description
     var price by MenuElementTable.price
-    fun serialize() = MenuElement(name = name, ingredients = ingredients, description = description, price = price)
+
+    fun serialize() = MenuElement(uuid = id.value.toString(), name = name, ingredients = ingredients, description = description, price = price)
 
 }
 

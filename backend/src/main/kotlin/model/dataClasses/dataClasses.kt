@@ -2,6 +2,7 @@ package model.dataClasses
 
 import model.dao.DishState
 import routes.auth.Role
+import java.util.UUID
 
 // TODO serialize entities to Data classes
 
@@ -43,6 +44,7 @@ data class Course(
 
 
 data class Dish(
+    val uuid: String,
     val notes: String,
     val relatedClient: SimpleUser?,
     val menuElement: MenuElement,
@@ -50,6 +52,7 @@ data class Dish(
 )
 
 data class MenuElement(
+    val uuid: String,
     val name: String,
     val ingredients: String,
     val description: String,
