@@ -1,4 +1,4 @@
-package routes.auth
+package routes
 
 import instance
 import io.ktor.application.*
@@ -11,6 +11,7 @@ import model.dao.*
 import model.tables.BillsTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
+import routes.auth.Role
 
 fun Route.kitchenApi() = route("kitchen") {
     val db: Database by instance()

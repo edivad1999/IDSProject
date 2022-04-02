@@ -14,7 +14,6 @@ data class User(
 )
 
 data class SimpleUser(
-    //Abbiamo bisogno di due tipi di user altrimenti abbiamo una dipendenza ciclica
     val username: String,
     val role: Role,
     val email: String,

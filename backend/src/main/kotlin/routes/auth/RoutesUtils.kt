@@ -1,4 +1,4 @@
-package routes
+package routes.auth
 
 import io.ktor.routing.*
 import kotlinx.serialization.Serializable

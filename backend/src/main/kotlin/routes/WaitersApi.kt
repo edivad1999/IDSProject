@@ -1,4 +1,4 @@
-package routes.auth
+package routes
 
 import instance
 import io.ktor.application.*
@@ -14,6 +14,7 @@ import model.tables.TablesTable
 import model.tables.UsersTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
+import routes.auth.Role
 
 fun Route.waitersApi() = route("waiter") {
     val db: Database by instance()

@@ -1,4 +1,4 @@
-package routes.auth
+package routes
 
 import instance
 import io.ktor.application.*
@@ -13,6 +13,8 @@ import model.tables.TablesTable
 import model.tables.UsersTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
+import routes.auth.BasePrincipal
+import routes.auth.Role
 
 fun Route.clientsApi() = route("clients") {
     val db: Database by instance()
@@ -24,7 +26,7 @@ fun Route.clientsApi() = route("clients") {
                 UserEntity.findById(id)!!.getCurrentOpenBill(null)?.serialize()
             } ?: HttpStatusCode.BadRequest)
         }
-        get("joinTable") {
+        post("joinTable") {
             val id = call.principal<BasePrincipal>()!!.userId.toUUID()
             val req = call.receive<BillJoinRequest>()
             val res = transaction(db) {

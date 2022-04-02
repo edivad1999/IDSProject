@@ -17,6 +17,7 @@ import org.kodein.di.instance
 import org.kodein.di.ktor.DIFeature
 import org.kodein.di.ktor.di
 import routes.auth.*
+import routes.clientsApi
 
 
 fun Application.managerModule() {

@@ -1,5 +1,5 @@
 import {Inject, Injectable} from '@angular/core';
-import {DOCUMENT} from "@angular/common";
+import {DOCUMENT} from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -12,13 +12,13 @@ export class Endpoints {
   basePath = 'api';
 
   constructor(@Inject(DOCUMENT) private document: Document) {
-    //rework to enable usage in local network
-    if (document.location.hostname.startsWith("192")) {
-      this.hostname = document.location.hostname
-    } else if (document.location.hostname !== "localhost") {
-      //this.hostname = Insert backend url
-      this.httpProtocol = 'https'
-      this.port = 80
+    // rework to enable usage in local network
+    if (document.location.hostname.startsWith('192')) {
+      this.hostname = document.location.hostname;
+    } else if (document.location.hostname !== 'localhost') {
+      // this.hostname = Insert backend url
+      this.httpProtocol = 'https';
+      this.port = 80;
 
     }
 
@@ -46,5 +46,70 @@ export class Endpoints {
     url += finalPath;
     return url;
   }
+
+
+  // client apis endpoint
+
+  getBillUrl(): string {
+    return this.buildUrl(`clients/getBill`);
+  }
+
+  joinTableUrl(): string {
+    return this.buildUrl(`clients/joinTable`);
+  }
+
+  getMenuUrl(): string {
+    return this.buildUrl(`clients/getMenu`);
+  }
+
+  editDishUrl(): string {
+    return this.buildUrl(`clients/editDish`);
+  }
+
+  addToCourseUrl(): string {
+    return this.buildUrl(`clients/addToCourse`);
+  }
+
+  removeDishUrl(dishId: string): string {
+    return this.buildUrl(`clients/removeDish?dishId=${dishId}`);
+  }
+
+  setReadyUrl(courseId: string): string {
+    return this.buildUrl(`clients/setReady?courseId=${courseId}`);
+  }
+
+  // waiter apis
+  billListUrl(): string {
+    return this.buildUrl(`waiter/billList`);
+  }
+
+  closeBillUrl(billId: string): string {
+    return this.buildUrl(`waiter/closeBill?billId=${billId}`);
+  }
+
+  openBillUrl(tableNumber: number, coveredNumber: number): string {
+    return this.buildUrl(`waiter/openBill?tableNumber=${tableNumber}&coveredNumber=${coveredNumber}`);
+  }
+
+  waiterGetBillUrl(billId: string): string {
+    return this.buildUrl(`waiter/getBill?billId=${billId}`);
+  }
+
+  waiterAddToCourseUrl(): string {
+    return this.buildUrl(`waiter/addToCourse`);
+  }
+
+  waiterEditDishUrl(dishId: string): string {
+    return this.buildUrl(`waiter/editDish?dishId=${dishId}`);
+  }
+
+  waiterRemoveDishUrl(): string {
+    return this.buildUrl(`waiter/removeDish`);
+  }
+
+  forceSetReadyUrl(): string {
+    return this.buildUrl(`waiter/forceSetReady`);
+  }
+
 
 }
