@@ -25,13 +25,13 @@ object BillsTable : UUIDTable("bills", "uuid") {
 }
 
 object UsersBillsTable : Table("users-bills") {
-     val user = reference("user", UsersTable)
-     val bill = reference("bill", BillsTable)
+    val user = reference("user", UsersTable)
+    val bill = reference("bill", BillsTable)
     override val primaryKey = PrimaryKey(user, bill)
 }
 
 object TablesTable : UUIDTable("tables", "uuid") {
-    val number = integer("number")
+    val number = integer("number").uniqueIndex()
     val isOccupied = bool("number")
 }
 
@@ -58,4 +58,5 @@ object MenuElementTable : UUIDTable("menu_elements", "uuid") {
     val ingredients = varchar("ingredients", 600)
     val description = varchar("description", 600)
     val price = float("price")
+    val isCurrentlyActive=bool("isCurrentlyActive")
 }

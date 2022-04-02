@@ -36,7 +36,7 @@ fun Route.clientsApi() = route("clients") {
         }
         get("getMenu") {
             call.respond(transaction(db) {
-                MenuElementEntity.all().map { it.serialize() }
+                MenuElementEntity.all().filter { it.isCurrentlyActive }.map { it.serialize() }
             })
         }
         post("editDish") {
@@ -66,7 +66,7 @@ fun Route.clientsApi() = route("clients") {
                     this.menuElement = MenuElementEntity.findById(request.dish.menuElement.uuid.toUUID())!!
                     this.notes = request.dish.notes
                     this.relatedClient = SimpleUserEntity.find { UsersTable.username eq request.dish.relatedClient?.username!! }.firstOrNull()
-                    this.state = request.dish.state.name
+                    this.state = DishState.WAITING.name
                     this.relatedCourseID = course.id
                 }
             }

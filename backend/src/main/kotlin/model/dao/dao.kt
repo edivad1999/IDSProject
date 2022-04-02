@@ -56,8 +56,8 @@ class BillEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     var openedAt by BillsTable.openedAt
     var closedAt by BillsTable.closedAt
     var relatedTable by TableEntity referencedOn BillsTable.relatedTable
-    var users by SimpleUserEntity via UsersBillsTable
-    var courses by CourseEntity via CoursesTable
+    val users by SimpleUserEntity via UsersBillsTable
+    val courses by CourseEntity referrersOn CoursesTable.relatedBill
     fun serialize() = Bill(secretCode = secretCode,
         coveredNumbers = coveredNumbers,
         openedAt = openedAt,
@@ -67,7 +67,7 @@ class BillEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
         courses = courses.map { it.serialize() })
 
     fun addUser(userId: UUID, code: String) = UserEntity.findById(userId)!!.takeIf { it.getCurrentOpenBill(this.id.value) == null }.let { user ->
-        if (user != null && secretCode == code) {
+        if (user != null && secretCode == code && coveredNumbers < users.toList().size) {
             UsersBillsTable.insert {
                 it[UsersBillsTable.user] = user.id
                 it[UsersBillsTable.bill] = billId.value
@@ -93,6 +93,7 @@ class TableEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
 class CourseEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
 
     companion object : UUIDEntityClass<CourseEntity>(CoursesTable)
+
     var relatedBillID by CoursesTable.relatedBill
     var isSent by CoursesTable.isSpedita
     var sentAt by CoursesTable.speditaAt
@@ -102,6 +103,12 @@ class CourseEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     fun getReadyClients() = (readyClients?.split(",") ?: emptyList()).mapNotNull { SimpleUserEntity.findById(it.toUUID()) }
     fun setReadyClients(users: List<SimpleUserEntity>) {
         readyClients = users.map { it.id.value }.joinToString { "," }
+    }
+
+    fun getAllRelatedClients(): List<SimpleUserEntity> {
+        val billEntity = BillEntity.findById(relatedBillID)!!
+        return billEntity.users.toList()
+
     }
 
     fun setReadyOnlyOne(user: SimpleUserEntity) {
@@ -121,10 +128,10 @@ class DishEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     var notes by DishesTable.notes
     var relatedClient by SimpleUserEntity optionalReferencedOn DishesTable.relatedClient
     var menuElement by MenuElementEntity referencedOn DishesTable.menuElement
-     var state by DishesTable.state
+    var state by DishesTable.state
     var relatedCourseID by DishesTable.relatedCourse
     fun getState() = DishState.valueOf(state)
-    fun serialize() = Dish(uuid=id.value.toString(),notes = notes, relatedClient = relatedClient?.serialize(), menuElement = menuElement.serialize(), state = getState())
+    fun serialize() = Dish(uuid = id.value.toString(), notes = notes, relatedClient = relatedClient?.serialize(), menuElement = menuElement.serialize(), state = getState())
 
 }
 
@@ -135,7 +142,7 @@ class MenuElementEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     var ingredients by MenuElementTable.ingredients
     var description by MenuElementTable.description
     var price by MenuElementTable.price
-
+    var isCurrentlyActive by MenuElementTable.isCurrentlyActive
     fun serialize() = MenuElement(uuid = id.value.toString(), name = name, ingredients = ingredients, description = description, price = price)
 
 }
