@@ -99,16 +99,47 @@ export class Endpoints {
     return this.buildUrl(`waiter/addToCourse`);
   }
 
-  waiterEditDishUrl(dishId: string): string {
-    return this.buildUrl(`waiter/editDish?dishId=${dishId}`);
+  waiterEditDishUrl(): string {
+    return this.buildUrl(`waiter/editDish`);
   }
 
-  waiterRemoveDishUrl(): string {
-    return this.buildUrl(`waiter/removeDish`);
+  waiterRemoveDishUrl(dishId: string): string {
+    return this.buildUrl(`waiter/removeDish?dishId=${dishId}`);
   }
 
-  forceSetReadyUrl(): string {
-    return this.buildUrl(`waiter/forceSetReady`);
+  forceSetReadyUrl(courseId: string): string {
+    return this.buildUrl(`waiter/forceSetReady?courseId=${courseId}`);
+  }
+
+  // manager apis
+
+  getAllTablesUrl(): string {
+    return this.buildUrl(`manager/getTables`);
+  }
+
+  setTablesUrl(): string {
+    return this.buildUrl(`manager/setTables`);
+  }
+
+  setMenuUrl(): string {
+    return this.buildUrl(`manager/setMenu`);
+  }
+
+  // kitchen api
+  getCoursesUrl(): string {
+    return this.buildUrl(`kitchen/courses`);
+  }
+
+  getCoursesByTableUrl(tableId: string): string {
+    return this.buildUrl(`kitchen/coursesByTable?tableId=${tableId}`);
+  }
+
+  getOpenCoursesUrl(): string {
+    return this.buildUrl(`kitchen/openCourses`);
+  }
+
+  editDishStateUrl(): string {
+    return this.buildUrl(`kitchen/editDishState`);
   }
 
 

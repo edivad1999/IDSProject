@@ -19,12 +19,12 @@ import routes.auth.Role
 fun Route.managerApi() = route("manager") {
     val db: Database by instance()
     authenticate(Role.MANAGER.name) {
-        get("tables") {
+        get("getTables") {
             call.respond(transaction(db) {
-                TableEntity.all().toList().size
+                TableEntity.all().map { it.serialize() }
             })
         }
-        post("tables") {
+        post("setTables") {
             val req = call.receive<MaxTablesRequest>()
             transaction(db) {
                 (1..req.maxTables + 1).forEach {

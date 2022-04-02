@@ -34,10 +34,11 @@ fun Route.kitchenApi() = route("kitchen") {
                 }//Si potrbbe fare meglio
             })
         }
-        get("editDishState") {
+        post("editDishState") {
             val req = call.receive<EditStateRequest>()
             transaction(db) {
-                DishEntity.findById(req.dishId.toUUID())!!.apply { this.state = req.newState.name }
+                DishEntity.findById(req.dishId.toUUID())!!.apply {
+                    this.state = req.newState.name }
             }
             call.respond(HttpStatusCode.OK)
         }

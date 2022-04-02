@@ -41,21 +41,22 @@ fun Route.waitersApi() = route("waiter") {
         get("openBill") {
             val tableNumber = call.parameters["tableNumber"]!!.toInt()
             val coveredNumber = call.parameters["coveredNumber"]!!.toInt()
-            val code = transaction(db) {
+            call.respond(transaction(db) {
                 val table = TableEntity.find { TablesTable.number eq tableNumber }.firstOrNull()!!
                 val isAlreadyOccupied = BillEntity.find { BillsTable.relatedTable eq table.id }.all { it.closedAt != null } && !table.isOccupied
                 if (!isAlreadyOccupied) {
-                    BillEntity.new {
+                    val code = BillEntity.new {
                         this.openedAt = System.currentTimeMillis()
                         this.relatedTable = table
                         this.coveredNumbers = coveredNumber
                         this.secretCode = ('0'..'9').shuffled().take(4).joinToString("")
                         this.closedAt = null
                     }.serialize().secretCode
-                } else null
+                    SimpleStringResponse(code)
+                } else HttpStatusCode.BadRequest
 
             }
-            call.respond(code ?: HttpStatusCode.BadRequest)
+            )
         }
         get("getBill") {
             val billId = call.parameters["billId"]!!
@@ -120,6 +121,7 @@ fun Route.waitersApi() = route("waiter") {
     }
 }
 
+data class SimpleStringResponse(val responseString: String)
 data class AddToCourseWaiterRequest(
     val dish: Dish,
     val courseId: String,

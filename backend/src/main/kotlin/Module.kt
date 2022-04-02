@@ -18,6 +18,9 @@ import org.kodein.di.ktor.DIFeature
 import org.kodein.di.ktor.di
 import routes.auth.*
 import routes.clientsApi
+import routes.kitchenApi
+import routes.managerApi
+import routes.waitersApi
 
 
 fun Application.managerModule() {
@@ -67,7 +70,9 @@ fun Application.managerModule() {
             loginApi()
             verifierJWTApi()
             clientsApi()
-
+            waitersApi()
+            managerApi()
+            kitchenApi()
         }
     }
 

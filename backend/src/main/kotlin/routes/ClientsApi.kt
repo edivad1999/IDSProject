@@ -22,9 +22,10 @@ fun Route.clientsApi() = route("clients") {
 
         get("getBill") {
             val id = call.principal<BasePrincipal>()!!.userId.toUUID()
-            call.respond(transaction(db) {
+            val response =transaction(db) {
                 UserEntity.findById(id)!!.getCurrentOpenBill(null)?.serialize()
-            } ?: HttpStatusCode.BadRequest)
+            } ?: HttpStatusCode.BadRequest
+            call.respond(response)
         }
         post("joinTable") {
             val id = call.principal<BasePrincipal>()!!.userId.toUUID()
