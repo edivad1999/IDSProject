@@ -8,7 +8,7 @@ import io.ktor.routing.*
 import io.ktor.serialization.*
 import kotlinx.coroutines.launch
 import model.dao.UserEntity
-import model.tables.UsersTable
+import model.tables.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -83,15 +83,56 @@ fun Application.initDb() = launch {
     val digester: PasswordDigester by instance()
     transaction(db) {
         SchemaUtils.createMissingTablesAndColumns(UsersTable)
+        SchemaUtils.createMissingTablesAndColumns(BillsTable)
+        SchemaUtils.createMissingTablesAndColumns(UsersBillsTable)
+        SchemaUtils.createMissingTablesAndColumns(TablesTable)
+        SchemaUtils.createMissingTablesAndColumns(CoursesTable)
+        SchemaUtils.createMissingTablesAndColumns(DishesTable)
+        SchemaUtils.createMissingTablesAndColumns(MenuElementTable)
 
         val admin = UserEntity.find {
             UsersTable.username eq "admin"
-        }
-        if (admin.empty()) {
+        }.takeIf { it.empty() }?.let {
             UserEntity.new {
                 username = "admin"
                 hashPass = digester.digest("password")
+                role = Role.MANAGER.name
+                email = "manager@app.app"
             }
+
+        }
+        val client = UserEntity.find {
+            UsersTable.username eq "client"
+        }.takeIf { it.empty() }?.let {
+            UserEntity.new {
+                username = "client"
+                hashPass = digester.digest("password")
+                role = Role.CLIENT.name
+                email = "client@app.app"
+            }
+
+        }
+        val kitchen = UserEntity.find {
+            UsersTable.username eq "kitchen"
+        }.takeIf { it.empty() }?.let {
+            UserEntity.new {
+                username = "kitchen"
+                hashPass = digester.digest("password")
+                role = Role.KITCHEN.name
+                email = "kitchen@app.app"
+            }
+
+        }
+        val waiter = UserEntity.find {
+            UsersTable.username eq "waiter"
+        }.takeIf { it.empty() }?.let{
+            UserEntity.new {
+                username = "waiter"
+                hashPass = digester.digest("password")
+                role = Role.WAITER.name
+                email = "waiter@app.app"
+            }
+
         }
     }
 }

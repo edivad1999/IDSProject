@@ -7,6 +7,7 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import kotlinx.serialization.Serializable
 import model.dao.MenuElementEntity
 import model.dao.TableEntity
 import model.dao.toUUID
@@ -15,10 +16,11 @@ import model.tables.TablesTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 import routes.auth.Role
+import routes.auth.authenticate
 
 fun Route.managerApi() = route("manager") {
     val db: Database by instance()
-    authenticate(Role.MANAGER.name) {
+    authenticate(Role.MANAGER) {
         get("getTables") {
             call.respond(transaction(db) {
                 TableEntity.all().map { it.serialize() }
@@ -59,11 +61,11 @@ fun Route.managerApi() = route("manager") {
         }
     }
 }
-
+@Serializable
 data class MenuRequest(
     val menuElements: List<MenuElement>,
 )
-
+@Serializable
 data class MaxTablesRequest(
     val maxTables: Int,
 )

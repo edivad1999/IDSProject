@@ -12,7 +12,6 @@ import model.dao.UserEntity
 import model.tables.UsersTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
-import routes.ErrorMessageResponse
 
 
 @Serializable

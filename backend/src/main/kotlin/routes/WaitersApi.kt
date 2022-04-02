@@ -7,6 +7,7 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import kotlinx.serialization.Serializable
 import model.dao.*
 import model.dataClasses.Dish
 import model.tables.BillsTable
@@ -15,10 +16,11 @@ import model.tables.UsersTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 import routes.auth.Role
+import routes.auth.authenticate
 
 fun Route.waitersApi() = route("waiter") {
     val db: Database by instance()
-    authenticate(Role.WAITER.name) {
+    authenticate(Role.WAITER) {
 
         get("billList") {
             call.respond(transaction(db) {
@@ -120,8 +122,9 @@ fun Route.waitersApi() = route("waiter") {
 
     }
 }
-
+@Serializable
 data class SimpleStringResponse(val responseString: String)
+@Serializable
 data class AddToCourseWaiterRequest(
     val dish: Dish,
     val courseId: String,

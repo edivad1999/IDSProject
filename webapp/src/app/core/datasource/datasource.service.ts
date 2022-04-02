@@ -5,7 +5,7 @@ import {JwtHandlerService} from '../../utils/jwt-handler.service';
 import {Endpoints} from '../endpoints/endpoints';
 import {HttpClient} from '@angular/common/http';
 import {AuthTokenData, SimpleStringResponse} from '../../data/requests';
-import {Bill, Course, Dish, DishState, MenuElement, Table} from '../../domain/model/data';
+import {Bill, Course, Dish, DishState, MenuElement, Role, Table, User} from '../../domain/model/data';
 
 
 @Injectable({
@@ -37,7 +37,18 @@ export class DatasourceService {
       })
     );
   }
-
+  whoAmI(): Observable<Role> {
+    return this.httpClient.get(
+      this.endpoints.whoAmIUrl(),
+      {observe: 'response'}
+    ).pipe(
+      map(
+        response => {
+          // @ts-ignore
+          return ((response.body as SimpleStringResponse).responseString  as Role);
+        })
+    );
+  }
   getBill(): Observable<Bill | null> {
     return this.httpClient.get(
       this.endpoints.getBillUrl(),

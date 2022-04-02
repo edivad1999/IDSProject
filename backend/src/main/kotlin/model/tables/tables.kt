@@ -32,7 +32,7 @@ object UsersBillsTable : Table("users-bills") {
 
 object TablesTable : UUIDTable("tables", "uuid") {
     val number = integer("number").uniqueIndex()
-    val isOccupied = bool("number")
+    val isOccupied = bool("isOccupied")
 }
 
 object CoursesTable : UUIDTable("courses", "uuid") {

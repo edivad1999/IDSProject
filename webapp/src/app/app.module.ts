@@ -26,16 +26,16 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {MatSelectModule} from '@angular/material/select';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {CentralColumnModule} from './utils/central-column/central-column.module';
-import {MatExpansionModule} from "@angular/material/expansion";
-import {MatCheckboxModule} from "@angular/material/checkbox";
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 import {HomeComponent} from './components/home/home.component';
 
-import {MatStepperModule} from "@angular/material/stepper";
-import {MatTabsModule} from "@angular/material/tabs";
+import {MatStepperModule} from '@angular/material/stepper';
+import {MatTabsModule} from '@angular/material/tabs';
 
-import {MatAutocompleteModule} from "@angular/material/autocomplete";
-import {MatMenuModule} from "@angular/material/menu";
-import {MatChipsModule} from "@angular/material/chips";
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatChipsModule} from '@angular/material/chips';
 
 @NgModule({
   declarations: [

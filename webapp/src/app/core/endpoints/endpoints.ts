@@ -47,6 +47,9 @@ export class Endpoints {
     return url;
   }
 
+  whoAmIUrl(): string {
+    return this.buildUrl('clients/whoAmI');
+  }
 
   // client apis endpoint
 

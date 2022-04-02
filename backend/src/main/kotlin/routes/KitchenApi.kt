@@ -7,15 +7,17 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import kotlinx.serialization.Serializable
 import model.dao.*
 import model.tables.BillsTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 import routes.auth.Role
+import routes.auth.authenticate
 
 fun Route.kitchenApi() = route("kitchen") {
     val db: Database by instance()
-    authenticate(Role.KITCHEN.name) {
+    authenticate(Role.KITCHEN) {
         get("courses") {
             call.respond(transaction(db) {
                 CourseEntity.all().map { it.serialize() }
@@ -46,7 +48,7 @@ fun Route.kitchenApi() = route("kitchen") {
 
     }
 }
-
+@Serializable
 data class EditStateRequest(
     val dishId: String, val newState: DishState,
 )

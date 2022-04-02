@@ -1,5 +1,5 @@
 package routes
-
+import kotlinx.serialization.Serializable
 import instance
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -15,14 +15,23 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 import routes.auth.BasePrincipal
 import routes.auth.Role
+import routes.auth.authenticate
 
 fun Route.clientsApi() = route("clients") {
     val db: Database by instance()
-    authenticate(Role.CLIENT.name) {
+    authenticate(Role.CLIENT) {
+        get("whoAmI") {
+            call.respond(transaction(db) {
+                val user = UserEntity.find { UsersTable.username eq call.principal<BasePrincipal>()!!.userId }.firstOrNull()
+                if (user != null) {
+                    SimpleStringResponse(user.role)
+                } else HttpStatusCode.BadRequest
+            })
 
+        }
         get("getBill") {
             val id = call.principal<BasePrincipal>()!!.userId.toUUID()
-            val response =transaction(db) {
+            val response = transaction(db) {
                 UserEntity.findById(id)!!.getCurrentOpenBill(null)?.serialize()
             } ?: HttpStatusCode.BadRequest
             call.respond(response)
@@ -94,17 +103,17 @@ fun Route.clientsApi() = route("clients") {
     }
 
 }
-
+@Serializable
 data class BillJoinRequest(
     val tableNumber: Int,
     val secretCode: String,
 )
-
+@Serializable
 data class EditDishRequest(
     val toEditId: String,
     val editedDish: Dish,
 )
-
+@Serializable
 data class AddToCourseRequest(
     val dish: Dish,
     val courseId: String,
