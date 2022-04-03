@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {DatasourceService} from '../../core/datasource/datasource.service';
 import {Observable, of, ReplaySubject} from 'rxjs';
-import {AuthState, Bill, Course, Dish, DishState, MenuElement, Role, Table, User} from '../../domain/model/data';
+import {AuthState, Bill, Course, Dish, DishState, MenuElement, Role, Table} from '../../domain/model/data';
 import {catchError, map, mergeMap, tap} from 'rxjs/operators';
 import {AuthTokenData} from '../requests';
 import {JwtHandlerService} from '../../utils/jwt-handler.service';
@@ -11,6 +11,7 @@ import {JwtHandlerService} from '../../utils/jwt-handler.service';
 })
 export class RepositoryService {
   authenticationStateFlow = new ReplaySubject<AuthState>(1);
+  role = new ReplaySubject<Role>(1);
 
 
   constructor(private datasource: DatasourceService,
@@ -63,8 +64,14 @@ export class RepositoryService {
   }
 
   whoAmI(): Observable<Role> {
-    return this.datasource.whoAmI();
+    return this.datasource.whoAmI()
+      .pipe(
+        map(t => {
+          this.role.next(t);
+          return t;
+        }));
   }
+
   getBill(): Observable<Bill | null> {
     return this.datasource.getBill();
   }

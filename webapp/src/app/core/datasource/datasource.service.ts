@@ -5,7 +5,7 @@ import {JwtHandlerService} from '../../utils/jwt-handler.service';
 import {Endpoints} from '../endpoints/endpoints';
 import {HttpClient} from '@angular/common/http';
 import {AuthTokenData, SimpleStringResponse} from '../../data/requests';
-import {Bill, Course, Dish, DishState, MenuElement, Role, Table, User} from '../../domain/model/data';
+import {Bill, Course, Dish, DishState, MenuElement, Role, Table} from '../../domain/model/data';
 
 
 @Injectable({
@@ -37,18 +37,29 @@ export class DatasourceService {
       })
     );
   }
+
   whoAmI(): Observable<Role> {
     return this.httpClient.get(
       this.endpoints.whoAmIUrl(),
       {observe: 'response'}
     ).pipe(
       map(
-        response => {
-          // @ts-ignore
-          return ((response.body as SimpleStringResponse).responseString  as Role);
+        it => {
+          // Need that shit to catch enums
+          const role = it.body as SimpleStringResponse;
+          if (role.responseString === 'MANAGER') {
+            return Role.MANAGER;
+          } else if (role.responseString === 'WAITER') {
+            return Role.WAITER;
+          } else if (role.responseString === 'KITCHEN') {
+            return Role.KITCHEN;
+          } else {
+            return Role.CLIENT;
+          }
         })
     );
   }
+
   getBill(): Observable<Bill | null> {
     return this.httpClient.get(
       this.endpoints.getBillUrl(),

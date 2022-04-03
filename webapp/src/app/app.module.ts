@@ -28,7 +28,7 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {CentralColumnModule} from './utils/central-column/central-column.module';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatCheckboxModule} from '@angular/material/checkbox';
-import {HomeComponent} from './components/home/home.component';
+import {HomeComponent} from './components/Common/home/home.component';
 
 import {MatStepperModule} from '@angular/material/stepper';
 import {MatTabsModule} from '@angular/material/tabs';
@@ -36,6 +36,12 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatChipsModule} from '@angular/material/chips';
+import {ManagerHomeComponent} from './components/Manager/manager-home/manager-home.component';
+import {KitchenHomeComponent} from './components/Kitchen/kitchen-home/kitchen-home.component';
+import {WaiterHomeComponent} from './components/Waiter/waiter-home/waiter-home.component';
+import {ClientHomeComponent} from './components/Client/client-home/client-home.component';
+import {SetMenuComponent} from './components/Manager/set-menu/set-menu.component';
+import {SetTablesComponent} from './components/Manager/set-tables/set-tables.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +49,12 @@ import {MatChipsModule} from '@angular/material/chips';
     LoginComponent,
     LogoutComponent,
     HomeComponent,
+    ManagerHomeComponent,
+    KitchenHomeComponent,
+    WaiterHomeComponent,
+    ClientHomeComponent,
+    SetMenuComponent,
+    SetTablesComponent,
 
   ],
   imports: [
@@ -75,7 +87,8 @@ import {MatChipsModule} from '@angular/material/chips';
     MatTabsModule,
     MatAutocompleteModule,
     MatMenuModule,
-    MatChipsModule
+    MatChipsModule,
+    MatListModule
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
   ],

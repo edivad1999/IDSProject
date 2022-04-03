@@ -1,0 +1,45 @@
+<lib-central-column>
+  <div *ngIf="currentMenu.length>0">
+    <div *ngFor="let menuElement of currentMenu">
+      <mat-card>
+        <mat-card-title> {{menuElement.name}}</mat-card-title>
+
+      </mat-card>
+    </div>
+  </div>
+  <div *ngIf="currentMenu.length===0">Attualmente il menù è vuoto</div>
+  <div>
+    <mat-card [formGroup]="toInsert" style="display: flex; flex-direction: column">
+
+      <mat-card-title>
+        Crea un nuovo piatto!
+      </mat-card-title>
+
+      <mat-form-field>
+        <mat-label>Nome</mat-label>
+        <input matInput formControlName="name">
+        <mat-error>Il campo non può essere vuoto</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Ingredienti</mat-label>
+        <input matInput formControlName="ingredients">
+        <mat-error>Il campo non può essere vuoto</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Descrizione</mat-label>
+        <input matInput formControlName="description">
+        <mat-error>Il campo non può essere vuoto</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Prezzo</mat-label>
+        <input matInput formControlName="price" type="number" min="0" step=".01">
+        <mat-error>Il campo non può essere vuoto</mat-error>
+      </mat-form-field>
+      <mat-card-actions align="end">
+        <button mat-raised-button color="warn" (click)="resetElement()">Resetta</button>
+
+        <button mat-raised-button color="accent" (click)="addElement()" [disabled]="toInsert.invalid" >Aggiungi</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</lib-central-column>
