@@ -1,13 +1,46 @@
 <lib-central-column>
-  <div *ngIf="currentMenu.length>0">
-    <div *ngFor="let menuElement of currentMenu">
-      <mat-card>
-        <mat-card-title> {{menuElement.name}}</mat-card-title>
-
+  <div *ngIf="currentMenu.length>0" style="margin-bottom: 12px">
+    <div *ngFor="let menuElement of currentMenu" style="margin-bottom: 12px">
+      <mat-card style="display: flex; flex-direction: column">
+        <div *ngIf="menuElement.uuid!==editingElementId">
+          <div>Nome: {{menuElement.name}}</div>
+          <div>Ingredienti: {{menuElement.ingredients}}</div>
+          <div>Descrizione: {{menuElement.description}}</div>
+          <div>Prezzo: {{menuElement.price}}€</div>
+        </div>
+        <div [formGroup]="editing" *ngIf="menuElement.uuid===editingElementId">
+          <mat-form-field>
+            <mat-label>Nome</mat-label>
+            <input matInput formControlName="name">
+            <mat-error>Il campo non può essere vuoto</mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Ingredienti</mat-label>
+            <input matInput formControlName="ingredients">
+            <mat-error>Il campo non può essere vuoto</mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Descrizione</mat-label>
+            <input matInput formControlName="description">
+            <mat-error>Il campo non può essere vuoto</mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Prezzo</mat-label>
+            <input matInput formControlName="price" type="number" min="0" step=".01">
+            <mat-error>Il campo non può essere vuoto</mat-error>
+          </mat-form-field>
+        </div>
+        <div style="display: flex; justify-content: space-between">
+          <button mat-icon-button color="warn" (click)="remove(menuElement)" *ngIf="menuElement.uuid!==editingElementId "> Rimuovi</button>
+          <button mat-icon-button color="warn" (click)="cancelEdit(menuElement)" *ngIf="menuElement.uuid===editingElementId "> Annulla modifica</button>
+          <button mat-icon-button color="accent" (click)="startEdit(menuElement)" *ngIf="menuElement.uuid!==editingElementId && editingElementId===null"> Modifica</button>
+          <button mat-icon-button color="accent" (click)="endEdit(menuElement)" *ngIf="menuElement.uuid===editingElementId"> Conferma</button>
+        </div>
       </mat-card>
+
     </div>
   </div>
-  <div *ngIf="currentMenu.length===0">Attualmente il menù è vuoto</div>
+  <div *ngIf="currentMenu.length===0" style="margin-bottom: 12px">Attualmente il menù è vuoto</div>
   <div>
     <mat-card [formGroup]="toInsert" style="display: flex; flex-direction: column">
 
@@ -38,7 +71,7 @@
       <mat-card-actions align="end">
         <button mat-raised-button color="warn" (click)="resetElement()">Resetta</button>
 
-        <button mat-raised-button color="accent" (click)="addElement()" [disabled]="toInsert.invalid" >Aggiungi</button>
+        <button mat-raised-button color="accent" (click)="addElement()" [disabled]="toInsert.invalid">Aggiungi</button>
       </mat-card-actions>
     </mat-card>
   </div>
