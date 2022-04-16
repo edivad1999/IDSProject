@@ -1,78 +1,73 @@
 <lib-central-column>
-  <div *ngIf="currentMenu.length>0" style="margin-bottom: 12px">
-    <div *ngFor="let menuElement of currentMenu" style="margin-bottom: 12px">
-      <mat-card style="display: flex; flex-direction: column">
-        <div *ngIf="menuElement.uuid!==editingElementId">
-          <div>Nome: {{menuElement.name}}</div>
-          <div>Ingredienti: {{menuElement.ingredients}}</div>
-          <div>Descrizione: {{menuElement.description}}</div>
-          <div>Prezzo: {{menuElement.price}}€</div>
-        </div>
-        <div [formGroup]="editing" *ngIf="menuElement.uuid===editingElementId">
-          <mat-form-field>
-            <mat-label>Nome</mat-label>
-            <input matInput formControlName="name">
-            <mat-error>Il campo non può essere vuoto</mat-error>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Ingredienti</mat-label>
-            <input matInput formControlName="ingredients">
-            <mat-error>Il campo non può essere vuoto</mat-error>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Descrizione</mat-label>
-            <input matInput formControlName="description">
-            <mat-error>Il campo non può essere vuoto</mat-error>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Prezzo</mat-label>
-            <input matInput formControlName="price" type="number" min="0" step=".01">
-            <mat-error>Il campo non può essere vuoto</mat-error>
-          </mat-form-field>
-        </div>
-        <div style="display: flex; justify-content: space-between">
-          <button mat-icon-button color="warn" (click)="remove(menuElement)" *ngIf="menuElement.uuid!==editingElementId "> Rimuovi</button>
-          <button mat-icon-button color="warn" (click)="cancelEdit(menuElement)" *ngIf="menuElement.uuid===editingElementId "> Annulla modifica</button>
-          <button mat-icon-button color="accent" (click)="startEdit(menuElement)" *ngIf="menuElement.uuid!==editingElementId && editingElementId===null"> Modifica</button>
-          <button mat-icon-button color="accent" (click)="endEdit(menuElement)" *ngIf="menuElement.uuid===editingElementId"> Conferma</button>
-        </div>
-      </mat-card>
+  <div [formGroup]="formGroupContainer">
 
+    <div [formArrayName]="'list'">
+      <div *ngFor="let viewElement of this.currentMenuArrayList.controls" [formGroup]="castToFormGroup(viewElement)">
+        <mat-card formGroupName="element">
+          <mat-form-field>
+            <mat-label>
+              Nome
+            </mat-label>
+            <input matInput formControlName="name" [value]="viewElement.value.element.name" required>
+            <mat-error>Il campo non è valido</mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>
+              Ingredienti
+            </mat-label>
+            <input matInput formControlName="ingredients" [value]="viewElement.value.element.ingredients" required>
+            <mat-error>Il campo non è valido</mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>
+              Descrizione
+            </mat-label>
+            <input matInput formControlName="description" [value]="viewElement.value.element.description" required>
+            <mat-error>Il campo non è valido</mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>
+              Prezzo
+            </mat-label>
+            <input matInput formControlName="price" [value]="viewElement.value.element.price" type="number" min="0" step=".01">
+            <mat-error>Il campo non è valido</mat-error>
+          </mat-form-field>
+        </mat-card>
+      </div>
     </div>
   </div>
-  <div *ngIf="currentMenu.length===0" style="margin-bottom: 12px">Attualmente il menù è vuoto</div>
-  <div>
-    <mat-card [formGroup]="toInsert" style="display: flex; flex-direction: column">
-
-      <mat-card-title>
-        Crea un nuovo piatto!
-      </mat-card-title>
-
-      <mat-form-field>
-        <mat-label>Nome</mat-label>
-        <input matInput formControlName="name">
-        <mat-error>Il campo non può essere vuoto</mat-error>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Ingredienti</mat-label>
-        <input matInput formControlName="ingredients">
-        <mat-error>Il campo non può essere vuoto</mat-error>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Descrizione</mat-label>
-        <input matInput formControlName="description">
-        <mat-error>Il campo non può essere vuoto</mat-error>
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Prezzo</mat-label>
-        <input matInput formControlName="price" type="number" min="0" step=".01">
-        <mat-error>Il campo non può essere vuoto</mat-error>
-      </mat-form-field>
-      <mat-card-actions align="end">
-        <button mat-raised-button color="warn" (click)="resetElement()">Resetta</button>
-
-        <button mat-raised-button color="accent" (click)="addElement()" [disabled]="toInsert.invalid">Aggiungi</button>
-      </mat-card-actions>
-    </mat-card>
-  </div>
+  <mat-card [formGroup]="creatingElement">
+    <mat-card-title>Aggiungi nuovo</mat-card-title>
+    <mat-form-field>
+      <mat-label>
+        Nome
+      </mat-label>
+      <input matInput formControlName="name" required>
+      <mat-error>Il campo non è valido</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>
+        Ingredienti
+      </mat-label>
+      <input matInput formControlName="ingredients" required>
+      <mat-error>Il campo non è valido</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>
+        Descrizione
+      </mat-label>
+      <input matInput formControlName="description" required>
+      <mat-error>Il campo non è valido</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>
+        Prezzo
+      </mat-label>
+      <input matInput formControlName="price" type="number" min="0" step=".01">
+      <mat-error>Il campo non è valido</mat-error>
+    </mat-form-field>
+    <mat-card-actions align="end">
+      <button mat-button [disabled]="creatingElement.invalid" (click)="addCreating()">Aggiungi</button>
+    </mat-card-actions>
+  </mat-card>
 </lib-central-column>

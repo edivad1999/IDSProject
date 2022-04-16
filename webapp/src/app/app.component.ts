@@ -83,10 +83,7 @@ export class AppComponent extends SubscriberContextComponent implements OnInit {
         return false;
 
       } else {
-        // tslint:disable-next-line:no-non-null-assertion
-        console.log(userRole!.valueOf());
-        // tslint:disable-next-line:no-non-null-assertion
-        console.log(routeRole!.valueOf());
+
         return userRole.valueOf() >= routeRole.valueOf();
       }
     }

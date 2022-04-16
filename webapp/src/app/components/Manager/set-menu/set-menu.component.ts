@@ -2,8 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {RepositoryService} from '../../../data/repository/repository.service';
 import {SubscriberContextComponent} from '../../../utils/subscriber-context.component';
 import {MenuElement} from '../../../domain/model/data';
-import {FormBuilder, Validators} from '@angular/forms';
-import {v4 as uuid} from 'uuid';
+import {AbstractControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
+
 
 @Component({
   selector: 'app-set-menu',
@@ -12,64 +12,51 @@ import {v4 as uuid} from 'uuid';
 })
 export class SetMenuComponent extends SubscriberContextComponent implements OnInit {
 
-  currentMenu: MenuElement[] = [];
-  editingElementId: string | null = null;
-  toInsert = this.fb.group(
-    {
-      name: this.fb.control(null, [Validators.required]),
-      ingredients: this.fb.control(null, [Validators.required]),
-      description: this.fb.control(null, [Validators.required]),
-      price: this.fb.control(null, [Validators.required])
-    }
-  );
-  editing = this.fb.group(
-    {
-      name: this.fb.control(null, [Validators.required]),
-      ingredients: this.fb.control(null, [Validators.required]),
-      description: this.fb.control(null, [Validators.required]),
-      price: this.fb.control(null, [Validators.required])
-    }
-  );
+  currentMenuArrayList = this.fb.array([]);
+
+  formGroupContainer = this.fb.group({
+    list: this.currentMenuArrayList
+  });
+
+  creatingElement = this.fb.group({
+    name: this.fb.control(null, [Validators.required, Validators.minLength(1)]),
+    ingredients: this.fb.control(null, [Validators.required, Validators.minLength(1)]),
+    description: this.fb.control(null, [Validators.required, Validators.minLength(1)]),
+    price: this.fb.control(null, [Validators.required, Validators.min(0)]),
+  });
 
   constructor(private repo: RepositoryService,
-              private fb: FormBuilder
-  ) {
+              private fb: FormBuilder) {
     super();
   }
 
   ngOnInit(): void {
-    this.subscribeWithContext(this.repo.getMenu(), it => this.currentMenu = it);
+    this.subscribeWithContext(this.repo.getMenu(), it => it.forEach(value => this.addFormElement(value, false)));
   }
 
-  addElement(): void {
-    const newElement = this.toInsert.value as MenuElement;
-    newElement.uuid = uuid(); // setting this does nothing backend side it gets overrided
-    this.currentMenu.push(newElement);
-    this.toInsert.reset();
+  addFormElement(view: MenuElement, editing: boolean): void {
+    const group = this.fb.group({
+      element: this.fb.group({
+        name: this.fb.control({value: view.name, disabled: !editing}, [Validators.required, Validators.minLength(1)]),
+        ingredients: this.fb.control({value: view.ingredients, disabled: !editing}, [Validators.required, Validators.minLength(1)]),
+        description: this.fb.control({value: view.description, disabled: !editing}, [Validators.required, Validators.minLength(1)]),
+        price: this.fb.control({value: view.price, disabled: !editing}, [Validators.required, Validators.min(0)]),
+      }),
+    });
+    this.currentMenuArrayList.push(group);
+    console.log(this.formGroupContainer);
+
   }
 
-  resetElement(): void {
-    this.toInsert.reset();
+  castToFormGroup(abstract: AbstractControl): FormGroup {
+    console.log(abstract as FormGroup);
+    return abstract as FormGroup;
+
   }
 
-  remove(menuElement: MenuElement): void {
-    this.currentMenu = this.currentMenu.filter(it => it.uuid !== menuElement.uuid);
-  }
+  addCreating(): void {
 
-  startEdit(menuElement: MenuElement): void {
-    this.editingElementId = menuElement.uuid;
-    this.editing.setValue(menuElement);
-  }
-
-  endEdit(menuElement: MenuElement): void {
-    this.editingElementId = null;
-    this.currentMenu.filter(it => it.uuid === menuElement.uuid)[0] = this.editing.value;// aggiungere setting ogggetto da editing form
-    this.editing.reset();
-  }
-
-  cancelEdit(menuElement: MenuElement): void {
-    this.editingElementId = null;
-    this.editing.reset();
-
+    this.addFormElement(this.creatingElement.value, false);
+    this.creatingElement.reset();
   }
 }
