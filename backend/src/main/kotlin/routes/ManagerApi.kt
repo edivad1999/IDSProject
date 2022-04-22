@@ -2,7 +2,6 @@ package routes
 
 import instance
 import io.ktor.application.*
-import io.ktor.auth.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
@@ -29,7 +28,7 @@ fun Route.managerApi() = route("manager") {
         post("setTables") {
             val req = call.receive<MaxTablesRequest>()
             transaction(db) {
-                (1..req.maxTables + 1).forEach {
+                (1..req.maxTables).forEach {
                     TableEntity.find { TablesTable.number eq it }.firstOrNull() ?: TableEntity.new {
                         isOccupied = false
                         number = it
@@ -61,10 +60,12 @@ fun Route.managerApi() = route("manager") {
         }
     }
 }
+
 @Serializable
 data class MenuRequest(
     val menuElements: List<MenuElement>,
 )
+
 @Serializable
 data class MaxTablesRequest(
     val maxTables: Int,

@@ -3,6 +3,8 @@ import {RepositoryService} from '../../../data/repository/repository.service';
 import {SubscriberContextComponent} from '../../../utils/subscriber-context.component';
 import {MenuElement} from '../../../domain/model/data';
 import {AbstractControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import * as uuid from 'uuid';
 
 
 @Component({
@@ -18,6 +20,7 @@ export class SetMenuComponent extends SubscriberContextComponent implements OnIn
     list: this.currentMenuArrayList
   });
 
+
   creatingElement = this.fb.group({
     name: this.fb.control(null, [Validators.required, Validators.minLength(1)]),
     ingredients: this.fb.control(null, [Validators.required, Validators.minLength(1)]),
@@ -25,7 +28,7 @@ export class SetMenuComponent extends SubscriberContextComponent implements OnIn
     price: this.fb.control(null, [Validators.required, Validators.min(0)]),
   });
 
-  constructor(private repo: RepositoryService,
+  constructor(private repo: RepositoryService, private snackBar: MatSnackBar,
               private fb: FormBuilder) {
     super();
   }
@@ -44,19 +47,37 @@ export class SetMenuComponent extends SubscriberContextComponent implements OnIn
       }),
     });
     this.currentMenuArrayList.push(group);
-    console.log(this.formGroupContainer);
 
   }
 
   castToFormGroup(abstract: AbstractControl): FormGroup {
-    console.log(abstract as FormGroup);
     return abstract as FormGroup;
 
   }
 
   addCreating(): void {
-
     this.addFormElement(this.creatingElement.value, false);
     this.creatingElement.reset();
+  }
+
+  saveMenu(): void {
+    this.formGroupContainer.enable();
+    if (this.formGroupContainer.valid) {
+      const menu = this.currentMenuArrayList.getRawValue().map(it => it.element as MenuElement).map(it => {
+        if (it.uuid !== null) {
+          it.uuid = uuid.v4();
+        }
+        return it;
+      });
+      this.subscribeWithContext(this.repo.setMenu(menu), action => {
+        this.snackBar.open(action ? 'Salvato correttamente' : 'Qualcosa è andato storto', 'Chiudi');
+
+      });
+    }
+    this.formGroupContainer.disable();
+  }
+
+  isFormInvalid(): boolean {
+    return this.formGroupContainer.invalid;
   }
 }
