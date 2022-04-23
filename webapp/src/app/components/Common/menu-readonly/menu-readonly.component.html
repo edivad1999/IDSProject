@@ -1,0 +1,19 @@
+<mat-card style="min-width: 300px">
+  <div style="display: flex ;align-items: baseline">
+    <span style="margin-right: 12px">
+      {{this.menuElement.name}}
+    </span>
+    <mat-card-subtitle>
+      {{this.menuElement.ingredients}}
+    </mat-card-subtitle>
+  </div>
+  <mat-divider></mat-divider>
+  <mat-card-subtitle style="margin-top: 15px">
+    {{this.menuElement.description}}
+  </mat-card-subtitle>
+  <mat-divider>
+  </mat-divider>
+  <mat-card-content style="margin-top: 30px">
+    {{menuElement.price}}
+  </mat-card-content>
+</mat-card>

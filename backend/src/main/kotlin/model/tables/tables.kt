@@ -21,7 +21,7 @@ object BillsTable : UUIDTable("bills", "uuid") {
     val coveredNumbers = integer("coveredNumbers")
     val openedAt = long("openedAt")
     val closedAt = long("closedAt").nullable()
-    val relatedTable = reference("relatedTable", TablesTable) //Così si mappa la 1 a n di tavoli conti // se si decidesse di rendere opzionale la referenza si può mettere nullable
+    val relatedTable = reference("relatedTable", TablesTable)//Così si mappa la 1 a n di tavoli conti // se si decidesse di rendere opzionale la referenza si può mettere nullable
 }
 
 object UsersBillsTable : Table("users-bills") {

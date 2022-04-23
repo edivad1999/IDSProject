@@ -30,9 +30,9 @@ fun Route.clientsApi() = route("clients") {
 
         }
         get("getBill") {
-            val id = call.principal<BasePrincipal>()!!.userId.toUUID()
+            val username = call.principal<BasePrincipal>()!!.userId
             val response = transaction(db) {
-                UserEntity.findById(id)!!.getCurrentOpenBill(null)?.serialize()
+                UserEntity.find{UsersTable.username eq username}.firstOrNull()!!.getCurrentOpenBill(null)?.serialize()
             } ?: HttpStatusCode.BadRequest
             call.respond(response)
         }

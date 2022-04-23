@@ -1,1 +1,17 @@
-<p>client-home works!</p>
+<lib-central-column>
+  <div class="topButtons">
+    <button mat-raised-button (click)="startAssociation()">
+      Associati ad un tavolo
+
+    </button>
+
+  </div>
+  <div *ngIf="!menu">
+    <mat-progress-bar mode="query" color="accent"></mat-progress-bar>
+  </div>
+  <div  *ngIf="menu">
+    <div *ngFor="let element of menu" style="margin-top: 12px">
+      <app-menu-readonly [menuElement]="element"></app-menu-readonly>
+    </div>
+  </div>
+</lib-central-column>
