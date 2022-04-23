@@ -29,23 +29,13 @@ class UserEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
 
 
     fun serialize() = User(username = this.username, role = this.getRole(), email = this.email, this.billHistory.toList().map { it.serialize() })
+    fun simpleSerialize() = SimpleUser(username = this.username, role = this.getRole(), email = this.email)
+
 }
 
 /**
  * C'è bisogno di questa entità perchè altrimenti si crea un ciclo con le referenze di course, dish e bill
  */
-class SimpleUserEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
-    companion object : UUIDEntityClass<SimpleUserEntity>(UsersTable)
-
-    var username by UsersTable.username
-    var hashPass by UsersTable.hashPass
-    var role by UsersTable.role
-    var email by UsersTable.email
-    fun getRole(): Role = Role.valueOf(role)
-    fun serialize() = SimpleUser(username = this.username, role = this.getRole(), email = this.email)
-
-
-}
 
 class BillEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     companion object : UUIDEntityClass<BillEntity>(BillsTable)
@@ -55,18 +45,18 @@ class BillEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     var openedAt by BillsTable.openedAt
     var closedAt by BillsTable.closedAt
     var relatedTable by TableEntity referencedOn BillsTable.relatedTable
-    val users by SimpleUserEntity via UsersBillsTable
+    val users by UserEntity via UsersBillsTable
     val courses by CourseEntity referrersOn CoursesTable.relatedBill
     fun serialize() = Bill(secretCode = secretCode,
         coveredNumbers = coveredNumbers,
         openedAt = openedAt,
         closedAt = closedAt,
         relatedTable = this.relatedTable.serialize(),
-        users = users.map { it.serialize() },
+        users = users.map { it.simpleSerialize() },
         courses = courses.map { it.serialize() })
 
     fun addUser(userId: UUID, code: String) = UserEntity.findById(userId)!!.takeIf { it.getCurrentOpenBill(this.id.value) == null }.let { user ->
-        if (user != null && secretCode == code && coveredNumbers < users.toList().size) {
+        if (user != null && secretCode == code && users.toList().size < coveredNumbers) {
             UsersBillsTable.insert {
                 it[UsersBillsTable.user] = user.id
                 it[UsersBillsTable.bill] = this@BillEntity.id.value
@@ -99,18 +89,18 @@ class CourseEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     private var readyClients by CoursesTable.readyClients //È privato perché ci si accede con le funzioni e non va mai toccato a mano
     val dishes by DishEntity referrersOn DishesTable.relatedCourse
 
-    fun getReadyClients() = (readyClients?.split(",") ?: emptyList()).mapNotNull { SimpleUserEntity.findById(it.toUUID()) }
-    fun setReadyClients(users: List<SimpleUserEntity>) {
+    fun getReadyClients() = (readyClients?.split(",") ?: emptyList()).mapNotNull { UserEntity.findById(it.toUUID()) }
+    fun setReadyClients(users: List<UserEntity>) {
         readyClients = users.map { it.id.value }.joinToString { "," }
     }
 
-    fun getAllRelatedClients(): List<SimpleUserEntity> {
+    fun getAllRelatedClients(): List<UserEntity> {
         val billEntity = BillEntity.findById(relatedBillID)!!
         return billEntity.users.toList()
 
     }
 
-    fun setReadyOnlyOne(user: SimpleUserEntity) {
+    fun setReadyOnlyOne(user: UserEntity) {
         val userAlreadyInside = getReadyClients().any { it.id == user.id }
         if (!userAlreadyInside) {
             setReadyClients(getReadyClients().toMutableList().apply { this.add(user) })
@@ -118,19 +108,19 @@ class CourseEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     }
 
 
-    fun serialize() = Course(isSent = isSent, sentAt = sentAt, readyClients = getReadyClients().map { it.serialize() }, dishes = dishes.map { it.serialize() })
+    fun serialize() = Course(isSent = isSent, sentAt = sentAt, readyClients = getReadyClients().map { it.simpleSerialize() }, dishes = dishes.map { it.serialize() })
 }
 
 class DishEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     companion object : UUIDEntityClass<DishEntity>(DishesTable)
 
     var notes by DishesTable.notes
-    var relatedClient by SimpleUserEntity optionalReferencedOn DishesTable.relatedClient
+    var relatedClient by UserEntity optionalReferencedOn DishesTable.relatedClient
     var menuElement by MenuElementEntity referencedOn DishesTable.menuElement
     var state by DishesTable.state
     var relatedCourseID by DishesTable.relatedCourse
     fun getState() = DishState.valueOf(state)
-    fun serialize() = Dish(uuid = id.value.toString(), notes = notes, relatedClient = relatedClient?.serialize(), menuElement = menuElement.serialize(), state = getState())
+    fun serialize() = Dish(uuid = id.value.toString(), notes = notes, relatedClient = relatedClient?.simpleSerialize(), menuElement = menuElement.serialize(), state = getState())
 
 }
 

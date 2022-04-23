@@ -1,5 +1,5 @@
 package routes
-import kotlinx.serialization.Serializable
+
 import instance
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -7,11 +7,13 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import kotlinx.serialization.Serializable
 import model.dao.*
 import model.dataClasses.Dish
 import model.tables.TablesTable
 import model.tables.UsersTable
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import routes.auth.BasePrincipal
 import routes.auth.Role
@@ -32,14 +34,14 @@ fun Route.clientsApi() = route("clients") {
         get("getBill") {
             val username = call.principal<BasePrincipal>()!!.userId
             val response = transaction(db) {
-                UserEntity.find{UsersTable.username eq username}.firstOrNull()!!.getCurrentOpenBill(null)?.serialize()
+                UserEntity.find { UsersTable.username eq username }.firstOrNull()!!.getCurrentOpenBill(null)?.serialize()
             } ?: HttpStatusCode.BadRequest
             call.respond(response)
         }
         post("joinTable") {
-            val id = call.principal<BasePrincipal>()!!.userId.toUUID()
             val req = call.receive<BillJoinRequest>()
             val res = transaction(db) {
+                val id = UserEntity.find { UsersTable.username eq call.principal<BasePrincipal>()!!.userId }.first().id.value
                 val tableNumber = TableEntity.find { TablesTable.number eq req.tableNumber }.firstOrNull()!!.number
                 val bill = BillEntity.all().firstOrNull { it.relatedTable.number == tableNumber }!!
                 if (bill.addUser(id, req.secretCode)) HttpStatusCode.OK else HttpStatusCode.BadRequest //Non sono sicuro si comporti come previsto
@@ -58,7 +60,7 @@ fun Route.clientsApi() = route("clients") {
                 DishEntity.findById(toEditDish.toEditId.toUUID())!!.apply {
                     this.menuElement = MenuElementEntity.findById(newDish.menuElement.uuid.toUUID())!!
                     this.notes = newDish.notes
-                    this.relatedClient = SimpleUserEntity.find { UsersTable.username eq newDish.relatedClient?.username!! }.firstOrNull()
+                    this.relatedClient = UserEntity.find { UsersTable.username eq newDish.relatedClient?.username!! }.firstOrNull()
                     this.state = newDish.state.name
                 }.serialize()
             })
@@ -77,7 +79,7 @@ fun Route.clientsApi() = route("clients") {
                 } ?: DishEntity.new {
                     this.menuElement = MenuElementEntity.findById(request.dish.menuElement.uuid.toUUID())!!
                     this.notes = request.dish.notes
-                    this.relatedClient = SimpleUserEntity.find { UsersTable.username eq request.dish.relatedClient?.username!! }.firstOrNull()
+                    this.relatedClient = UserEntity.find { UsersTable.username eq request.dish.relatedClient?.username!! }.firstOrNull()
                     this.state = DishState.WAITING.name
                     this.relatedCourseID = course.id
                 }
@@ -96,23 +98,26 @@ fun Route.clientsApi() = route("clients") {
             val userId = call.principal<BasePrincipal>()!!.userId.toUUID()
 
             transaction(db) {
-                CourseEntity.findById(courseId)!!.setReadyOnlyOne(SimpleUserEntity.findById(userId)!!)
+                CourseEntity.findById(courseId)!!.setReadyOnlyOne(UserEntity.findById(userId)!!)
             }
             call.respond(HttpStatusCode.OK)
         }
     }
 
 }
+
 @Serializable
 data class BillJoinRequest(
     val tableNumber: Int,
     val secretCode: String,
 )
+
 @Serializable
 data class EditDishRequest(
     val toEditId: String,
     val editedDish: Dish,
 )
+
 @Serializable
 data class AddToCourseRequest(
     val dish: Dish,

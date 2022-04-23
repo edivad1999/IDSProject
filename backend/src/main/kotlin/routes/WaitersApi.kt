@@ -14,6 +14,7 @@ import model.tables.BillsTable
 import model.tables.TablesTable
 import model.tables.UsersTable
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import routes.auth.Role
 import routes.auth.authenticate
@@ -79,7 +80,7 @@ fun Route.waitersApi() = route("waiter") {
                 } ?: DishEntity.new {
                     this.menuElement = MenuElementEntity.findById(request.dish.menuElement.uuid.toUUID())!!
                     this.notes = request.dish.notes
-                    this.relatedClient = SimpleUserEntity.find { UsersTable.username eq request.dish.relatedClient?.username!! }.firstOrNull()
+                    this.relatedClient = UserEntity.find { UsersTable.username eq request.dish.relatedClient?.username!! }.firstOrNull()
                     this.state = DishState.WAITING.name
                     this.relatedCourseID = course.id
                 }
@@ -94,7 +95,7 @@ fun Route.waitersApi() = route("waiter") {
                 DishEntity.findById(toEditDish.toEditId.toUUID())!!.apply {
                     this.menuElement = MenuElementEntity.findById(newDish.menuElement.uuid.toUUID())!!
                     this.notes = newDish.notes
-                    this.relatedClient = SimpleUserEntity.find { UsersTable.username eq newDish.relatedClient?.username!! }.firstOrNull()
+                    this.relatedClient = UserEntity.find { UsersTable.username eq newDish.relatedClient?.username!! }.firstOrNull()
                     this.state = newDish.state.name
                 }.serialize()
             })

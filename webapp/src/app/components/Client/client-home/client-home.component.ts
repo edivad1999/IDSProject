@@ -3,6 +3,8 @@ import {RepositoryService} from '../../../data/repository/repository.service';
 import {SubscriberContextComponent} from '../../../utils/subscriber-context.component';
 import {Bill, MenuElement} from '../../../domain/model/data';
 import {Router} from '@angular/router';
+import {MatDialog} from '@angular/material/dialog';
+import {BillAssociationDialogComponent} from './bill-association-dialog/bill-association-dialog.component';
 
 @Component({
   selector: 'app-client-home',
@@ -15,6 +17,7 @@ export class ClientHomeComponent extends SubscriberContextComponent implements O
   menu?: MenuElement[];
 
   constructor(
+    private dialog: MatDialog,
     private router: Router,
     private repo: RepositoryService
   ) {
@@ -35,6 +38,24 @@ export class ClientHomeComponent extends SubscriberContextComponent implements O
   }
 
   startAssociation(): void {
+    if (this.currentBill == null) {
+      const dialogRef = this.dialog.open(BillAssociationDialogComponent, {
+          panelClass: 'app-full-bleed-dialog',
+        }
+      );
+      this.subscribeWithContext(
+        dialogRef.afterClosed(), value => {
+          if (value) {
+            this.subscribeWithContext(this.repo.getBill(), bill => {
+              this.currentBill = bill;
+              if (bill != null) {
+                this.router.navigate(['/bill']);
+              }
+            });
+          }
+        }
+      );
+    }
     // this.subscribeWithContext(this.repo.getBill())
   }
 }

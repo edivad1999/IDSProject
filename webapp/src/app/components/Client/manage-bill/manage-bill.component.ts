@@ -10,6 +10,7 @@ export class ManageBillComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+
   }
 
 }

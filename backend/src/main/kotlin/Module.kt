@@ -208,7 +208,7 @@ fun Application.mockUsers() {
     UserEntity.new {
         username = "utenteTavolo1"
         hashPass = digester.digest("password")
-        role = Role.WAITER.name
+        role = Role.CLIENT.name
         email = lorem.email
     }
 }

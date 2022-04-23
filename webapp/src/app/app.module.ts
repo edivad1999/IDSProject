@@ -44,6 +44,7 @@ import {SetMenuComponent} from './components/Manager/set-menu/set-menu.component
 import {SetTablesComponent} from './components/Manager/set-tables/set-tables.component';
 import { ManageBillComponent } from './components/Client/manage-bill/manage-bill.component';
 import { MenuReadonlyComponent } from './components/Common/menu-readonly/menu-readonly.component';
+import { BillAssociationDialogComponent } from './components/Client/client-home/bill-association-dialog/bill-association-dialog.component';
 
 @NgModule({
   declarations: [
@@ -59,6 +60,7 @@ import { MenuReadonlyComponent } from './components/Common/menu-readonly/menu-re
     SetTablesComponent,
     ManageBillComponent,
     MenuReadonlyComponent,
+    BillAssociationDialogComponent,
 
   ],
   imports: [
