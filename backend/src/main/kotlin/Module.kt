@@ -180,6 +180,36 @@ fun Application.mockMenu(): List<MenuElementEntity> {
             ingredients = "Uovo, macinato, brodo",
             description = "Golosissimi Tortellini in brodo ${lorem.getWords(5)}",
             price = 10f
+        ),
+        MenuElement(
+            name = "Gnocchetti speck e panna",
+            ingredients = "Gnocchi di patate, speck, panna",
+            description = "Golosissimi Gnocchetti speck e panna ${lorem.getWords(5)}",
+            price = 12f
+        ),
+        MenuElement(
+            name = "Tagliata di Manzo",
+            ingredients = "Bisteccazza di manzo",
+            description = "Golosissima Tagliata di manzo ${lorem.getWords(5)}",
+            price = 18f
+        ),
+        MenuElement(
+            name = "Paillard alla griglia",
+            ingredients = "Paillard, contorno",
+            description = "Golosissima Paillard alla griglia con contorno di patate ${lorem.getWords(5)}",
+            price = 11f
+        ),
+        MenuElement(
+            name = "Filetto al pepe verde",
+            ingredients = "Filetto di manzo, pepe, verde",
+            description = "Golosissimo Filetto al pepe verde ${lorem.getWords(5)}",
+            price = 10f
+        ),
+        MenuElement(
+            name = "Scaloppine ai funghi misti",
+            ingredients = "Scaloppine, funghi, misti",
+            description = "Golosissime Scaloppine ai funghi misti ${lorem.getWords(5)}",
+            price = 11f
         )
 
     ).map {
@@ -200,17 +230,79 @@ fun Application.mockTables() {
             number = it
         }
     }
+
 }
 
 fun Application.mockUsers() {
     val digester: PasswordDigester by instance()
     val lorem: Lorem by instance()
     UserEntity.new {
-        username = "utenteTavolo1"
+        username = "utente1Tavolo1"
         hashPass = digester.digest("password")
         role = Role.CLIENT.name
         email = lorem.email
     }
+    UserEntity.new {
+        username = "utente1Tavolo2"
+        hashPass = digester.digest("password")
+        role = Role.CLIENT.name
+        email = lorem.email
+    }
+    UserEntity.new {
+        username = "utente1Tavolo3"
+        hashPass = digester.digest("password")
+        role = Role.CLIENT.name
+        email = lorem.email
+    }
+    UserEntity.new {
+        username = "utente2Tavolo1"
+        hashPass = digester.digest("password")
+        role = Role.CLIENT.name
+        email = lorem.email
+    }
+    UserEntity.new {
+        username = "utente2Tavolo2"
+        hashPass = digester.digest("password")
+        role = Role.CLIENT.name
+        email = lorem.email
+    }
+    UserEntity.new {
+        username = "utente3Tavolo2"
+        hashPass = digester.digest("password")
+        role = Role.CLIENT.name
+        email = lorem.email
+    }
+    UserEntity.new {
+        username = "utente2Tavolo3"
+        hashPass = digester.digest("password")
+        role = Role.CLIENT.name
+        email = lorem.email
+    }
+    UserEntity.new {
+        username = "MauroIlCameriere"
+        hashPass = digester.digest("password")
+        role = Role.CLIENT.name
+        email = lorem.email
+    }
+    UserEntity.new {
+        username = "PeppeIlCameriere"
+        hashPass = digester.digest("password")
+        role = Role.WAITER.name
+        email = lorem.email
+    }
+    UserEntity.new {
+        username = "LoChef"
+        hashPass = digester.digest("password")
+        role = Role.KITCHEN.name
+        email = lorem.email
+    }
+    UserEntity.new {
+        username = "IlSousChef"
+        hashPass = digester.digest("password")
+        role = Role.KITCHEN.name
+        email = lorem.email
+    }
+
 }
 
 fun Application.mockData() {
@@ -221,7 +313,43 @@ fun Application.mockData() {
             openedAt = System.currentTimeMillis()
             relatedTable = TableEntity.find { TablesTable.number eq 1 }.first()
 
+        },
+        BillEntity.new {
+            secretCode = "0001"
+            coveredNumbers = 3
+            openedAt = System.currentTimeMillis()
+            relatedTable = TableEntity.find { TablesTable.number eq 2 }.first()
+
+        },
+        BillEntity.new {
+            secretCode = "0002"
+            coveredNumbers = 2
+            openedAt = System.currentTimeMillis()
+            relatedTable = TableEntity.find { TablesTable.number eq 3 }.first()
+
+        },
+        BillEntity.new {
+            secretCode = "0003"
+            coveredNumbers = 6
+            openedAt = System.currentTimeMillis()
+            relatedTable = TableEntity.find { TablesTable.number eq 4 }.first()
+
+        },
+        BillEntity.new {
+            secretCode = "0004"
+            coveredNumbers = 5
+            openedAt = System.currentTimeMillis()
+            relatedTable = TableEntity.find { TablesTable.number eq 5 }.first()
+
+        },
+        BillEntity.new {
+            secretCode = "0005"
+            coveredNumbers = 3
+            openedAt = System.currentTimeMillis()
+            relatedTable = TableEntity.find { TablesTable.number eq 5 }.first()
+
         }
+
     )
 //    bills.forEach {
 //        CourseEntity.new {
