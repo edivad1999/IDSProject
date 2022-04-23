@@ -43,7 +43,7 @@ fun Route.clientsApi() = route("clients") {
             val res = transaction(db) {
                 val id = UserEntity.find { UsersTable.username eq call.principal<BasePrincipal>()!!.userId }.first().id.value
                 val tableNumber = TableEntity.find { TablesTable.number eq req.tableNumber }.firstOrNull()!!.number
-                val bill = BillEntity.all().firstOrNull { it.relatedTable.number == tableNumber }!!
+                val bill = BillEntity.all().firstOrNull { it.relatedTable.number == tableNumber && it.relatedTable.isOccupied}!!
                 if (bill.addUser(id, req.secretCode)) HttpStatusCode.OK else HttpStatusCode.BadRequest //Non sono sicuro si comporti come previsto
             }
             call.respond(res)

@@ -25,7 +25,7 @@ class UserEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
      * if null is returned you may have not any open bill or any open bill that matches with param
      */
     fun getCurrentOpenBill(uuid: UUID?): BillEntity? =
-        if (uuid != null) billHistory.firstOrNull { it.id.value == uuid && it.closedAt == null } else billHistory.sortedBy { it.openedAt }.firstOrNull { it.closedAt == null }
+        if (uuid != null) billHistory.firstOrNull { it.id.value == uuid && it.closedAt == null } else billHistory.sortedByDescending { it.openedAt }.firstOrNull { it.closedAt == null }
 
 
     fun serialize() = User(username = this.username, role = this.getRole(), email = this.email, this.billHistory.toList().map { it.serialize() })
@@ -55,8 +55,8 @@ class BillEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
         users = users.map { it.simpleSerialize() },
         courses = courses.map { it.serialize() })
 
-    fun addUser(userId: UUID, code: String) = UserEntity.findById(userId)!!.takeIf { it.getCurrentOpenBill(this.id.value) == null }.let { user ->
-        if (user != null && secretCode == code && users.toList().size < coveredNumbers) {
+    fun addUser(userId: UUID, code: String) = UserEntity.findById(userId)!!.let { user ->
+        if (secretCode == code && users.toList().size < coveredNumbers) {
             UsersBillsTable.insert {
                 it[UsersBillsTable.user] = user.id
                 it[UsersBillsTable.bill] = this@BillEntity.id.value

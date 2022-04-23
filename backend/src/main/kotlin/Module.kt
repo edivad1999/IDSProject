@@ -9,7 +9,10 @@ import io.ktor.routing.*
 import io.ktor.serialization.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import model.dao.*
+import model.dao.BillEntity
+import model.dao.MenuElementEntity
+import model.dao.TableEntity
+import model.dao.UserEntity
 import model.dataClasses.MenuElement
 import model.tables.*
 import org.jetbrains.exposed.sql.Database
@@ -311,42 +314,42 @@ fun Application.mockData() {
             secretCode = "0000"
             coveredNumbers = 4
             openedAt = System.currentTimeMillis()
-            relatedTable = TableEntity.find { TablesTable.number eq 1 }.first()
+            relatedTable = TableEntity.find { TablesTable.number eq 1 }.first().apply { isOccupied = true }
 
         },
         BillEntity.new {
             secretCode = "0001"
             coveredNumbers = 3
             openedAt = System.currentTimeMillis()
-            relatedTable = TableEntity.find { TablesTable.number eq 2 }.first()
+            relatedTable = TableEntity.find { TablesTable.number eq 2 }.first().apply { isOccupied = true }
 
         },
         BillEntity.new {
             secretCode = "0002"
             coveredNumbers = 2
             openedAt = System.currentTimeMillis()
-            relatedTable = TableEntity.find { TablesTable.number eq 3 }.first()
+            relatedTable = TableEntity.find { TablesTable.number eq 3 }.first().apply { isOccupied = true }
 
         },
         BillEntity.new {
             secretCode = "0003"
             coveredNumbers = 6
             openedAt = System.currentTimeMillis()
-            relatedTable = TableEntity.find { TablesTable.number eq 4 }.first()
+            relatedTable = TableEntity.find { TablesTable.number eq 4 }.first().apply { isOccupied = true }
 
         },
         BillEntity.new {
             secretCode = "0004"
             coveredNumbers = 5
             openedAt = System.currentTimeMillis()
-            relatedTable = TableEntity.find { TablesTable.number eq 5 }.first()
+            relatedTable = TableEntity.find { TablesTable.number eq 5 }.first().apply { isOccupied = false }
 
         },
         BillEntity.new {
             secretCode = "0005"
             coveredNumbers = 3
             openedAt = System.currentTimeMillis()
-            relatedTable = TableEntity.find { TablesTable.number eq 5 }.first()
+            relatedTable = TableEntity.find { TablesTable.number eq 5 }.first().apply { isOccupied = true }
 
         }
 
