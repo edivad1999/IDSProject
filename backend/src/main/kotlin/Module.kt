@@ -219,7 +219,7 @@ fun Application.mockData() {
             secretCode = "0000"
             coveredNumbers = 4
             openedAt = System.currentTimeMillis()
-            relatedTable = TableEntity.find { TablesTable.number eq 1 }.first()
+            relatedTable = TableEntity.find { TablesTable.number eq 1 }.first().apply { isOccupied=true }
 
         }
     )
