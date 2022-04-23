@@ -34,7 +34,6 @@ import {MatStepperModule} from "@angular/material/stepper";
 import {MatTabsModule} from "@angular/material/tabs";
 
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
-import {ZXingScannerModule} from "@zxing/ngx-scanner";
 import {MatMenuModule} from "@angular/material/menu";
 import {MatChipsModule} from "@angular/material/chips";
 
@@ -75,7 +74,6 @@ import {MatChipsModule} from "@angular/material/chips";
     MatStepperModule,
     MatTabsModule,
     MatAutocompleteModule,
-    ZXingScannerModule,
     MatMenuModule,
     MatChipsModule
   ],
