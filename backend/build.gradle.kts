@@ -98,12 +98,15 @@ dependencies {
     //others utils
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.2.1")
 
+    //Mock data
+    implementation("com.thedeanda", "lorem", loremVersion)
+
 
     //tests
     testImplementation(kotlin("test-junit5"))
     testImplementation("org.junit.jupiter", "junit-jupiter-api", jupyterVersion)
     testImplementation("org.junit.jupiter", "junit-jupiter-engine", jupyterVersion)
-    testImplementation("com.thedeanda", "lorem", loremVersion)
+
 }
 
 tasks.test {

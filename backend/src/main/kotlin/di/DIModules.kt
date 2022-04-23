@@ -1,5 +1,7 @@
 package di
 
+import com.thedeanda.lorem.Lorem
+import com.thedeanda.lorem.LoremIpsum
 import di.serializers.DayOfWeekSerializer
 import di.serializers.InstantSerializer
 import di.serializers.LocalTimeSerializer
@@ -35,6 +37,9 @@ object DIModules {
                 }
 
             }
+            bind<Lorem>() with singleton {
+                LoremIpsum.getInstance()
+            }
 
             bind<Base64Encoder>() with singleton { JavaBase64Encoder() }
         }
@@ -47,7 +52,7 @@ object DIModules {
                     val username: String = dbUri.userInfo.split(":")[0]
                     val password: String = dbUri.userInfo.split(":")[1]
                     val dbUrl = "jdbc:postgresql://" + dbUri.host + ':' + dbUri.port + dbUri.path
-                    Database.connect(dbUrl, driver = "org.postgresql.Driver",user=username, password=password)
+                    Database.connect(dbUrl, driver = "org.postgresql.Driver", user = username, password = password)
 
 
                 } else {

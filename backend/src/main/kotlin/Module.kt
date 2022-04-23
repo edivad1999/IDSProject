@@ -1,3 +1,4 @@
+import com.thedeanda.lorem.Lorem
 import di.DIModules
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -7,7 +8,10 @@ import io.ktor.http.*
 import io.ktor.routing.*
 import io.ktor.serialization.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import model.dao.MenuElementEntity
 import model.dao.UserEntity
+import model.dataClasses.MenuElement
 import model.tables.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -31,8 +35,7 @@ fun Application.managerModule() {
         import(DIModules.security)
 
     }
-    initDb()
-
+    init()
 
     install(CORS) {
         anyHost()
@@ -78,7 +81,13 @@ fun Application.managerModule() {
 
 }
 
-fun Application.initDb() = launch {
+fun Application.init() = launch {
+    initDb()
+    generateMockDataDB()
+}
+
+
+fun Application.initDb() = runBlocking {
     val db: Database by instance()
     val digester: PasswordDigester by instance()
     transaction(db) {
@@ -125,7 +134,7 @@ fun Application.initDb() = launch {
         }
         val waiter = UserEntity.find {
             UsersTable.username eq "waiter"
-        }.takeIf { it.empty() }?.let{
+        }.takeIf { it.empty() }?.let {
             UserEntity.new {
                 username = "waiter"
                 hashPass = digester.digest("password")
@@ -141,3 +150,43 @@ fun Authentication.Configuration.jwt(
     role: Role,
     configure: JWTAuthenticationProvider.Configuration.() -> Unit,
 ) = jwt(role.name, configure)
+
+
+fun Application.generateMockDataDB() = runBlocking {
+    val db: Database by instance()
+    transaction(db) {
+        SchemaUtils.drop(MenuElementTable, TablesTable, UsersBillsTable, BillsTable, CoursesTable, DishesTable, UsersTable, inBatch = true)
+        initDb()
+        mockMenu()
+
+//        initDb()
+    }
+
+}
+
+fun Application.mockMenu(): List<MenuElementEntity> {
+    val lorem: Lorem by instance()
+    return listOf(
+        MenuElement(
+            name = "Tagliatelle al Ragù",
+            ingredients = "Tagliatella e ragù",
+            description = "Golosissime Tagliatelle al ragù di bovino ${lorem.getWords(5)}",
+            price = 10f
+        ),
+        MenuElement(
+            name = "Tortellini in Brodo",
+            ingredients = "Uovo, macinato, brodo",
+            description = "Golosissimi Tortellini in brodo ${lorem.getWords(5)}",
+            price = 10f
+        )
+
+    ).map {
+        MenuElementEntity.new {
+            name = it.name
+            ingredients = it.ingredients
+            price = it.price
+            description = it.description
+            isCurrentlyActive = true
+        }
+    }
+}
