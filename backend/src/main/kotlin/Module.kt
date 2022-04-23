@@ -9,9 +9,7 @@ import io.ktor.routing.*
 import io.ktor.serialization.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import model.dao.MenuElementEntity
-import model.dao.TableEntity
-import model.dao.UserEntity
+import model.dao.*
 import model.dataClasses.MenuElement
 import model.tables.*
 import org.jetbrains.exposed.sql.Database
@@ -160,7 +158,8 @@ fun Application.generateMockDataDB() = runBlocking {
         initDb()
         mockMenu()
         mockTables()
-
+        mockUsers()
+        mockData()
 //        initDb()
     }
 
@@ -210,6 +209,26 @@ fun Application.mockUsers() {
         hashPass = digester.digest("password")
         role = Role.WAITER.name
         email = lorem.email
+    }
+}
+
+fun Application.mockData() {
+    val bills = listOf(
+        BillEntity.new {
+            secretCode = "0000"
+            coveredNumbers = 4
+            openedAt = System.currentTimeMillis()
+            relatedTable = TableEntity.find { TablesTable.number eq 1 }.first()
+
+        }, BillEntity.new {
+
+        }
+    )
+    bills.forEach {
+        CourseEntity.new {
+            relatedBillID=it.id
+
+        }
     }
 }
 

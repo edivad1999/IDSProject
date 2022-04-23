@@ -50,7 +50,6 @@ class SimpleUserEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
 class BillEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     companion object : UUIDEntityClass<BillEntity>(BillsTable)
 
-    var billId = this.id
     var secretCode by BillsTable.secretCode
     var coveredNumbers by BillsTable.coveredNumbers
     var openedAt by BillsTable.openedAt
@@ -70,7 +69,7 @@ class BillEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
         if (user != null && secretCode == code && coveredNumbers < users.toList().size) {
             UsersBillsTable.insert {
                 it[UsersBillsTable.user] = user.id
-                it[UsersBillsTable.bill] = billId.value
+                it[UsersBillsTable.bill] = this@BillEntity.id.value
             }
             true
         } else false
