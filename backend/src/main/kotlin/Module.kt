@@ -10,6 +10,7 @@ import io.ktor.serialization.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import model.dao.MenuElementEntity
+import model.dao.TableEntity
 import model.dao.UserEntity
 import model.dataClasses.MenuElement
 import model.tables.*
@@ -158,6 +159,7 @@ fun Application.generateMockDataDB() = runBlocking {
         SchemaUtils.drop(MenuElementTable, TablesTable, UsersBillsTable, BillsTable, CoursesTable, DishesTable, UsersTable, inBatch = true)
         initDb()
         mockMenu()
+        mockTables()
 
 //        initDb()
     }
@@ -190,3 +192,24 @@ fun Application.mockMenu(): List<MenuElementEntity> {
         }
     }
 }
+
+fun Application.mockTables() {
+    (1..20).forEach {
+        TableEntity.new {
+            isOccupied = false
+            number = it
+        }
+    }
+}
+
+fun Application.mockUsers() {
+    val digester: PasswordDigester by instance()
+    val lorem: Lorem by instance()
+    UserEntity.new {
+        username = "utenteTavolo1"
+        hashPass = digester.digest("password")
+        role = Role.WAITER.name
+        email = lorem.email
+    }
+}
+
