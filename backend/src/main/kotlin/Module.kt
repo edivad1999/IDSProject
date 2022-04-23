@@ -154,13 +154,14 @@ fun Authentication.Configuration.jwt(
 fun Application.generateMockDataDB() = runBlocking {
     val db: Database by instance()
     transaction(db) {
-        SchemaUtils.drop(MenuElementTable, TablesTable, UsersBillsTable, BillsTable, CoursesTable, DishesTable, UsersTable, inBatch = true)
+        SchemaUtils.drop(MenuElementTable, TablesTable, UsersBillsTable, BillsTable, CoursesTable, DishesTable, UsersTable, inBatch = false)
+    }
+    transaction(db) {
         initDb()
         mockMenu()
         mockTables()
         mockUsers()
         mockData()
-//        initDb()
     }
 
 }
@@ -220,15 +221,13 @@ fun Application.mockData() {
             openedAt = System.currentTimeMillis()
             relatedTable = TableEntity.find { TablesTable.number eq 1 }.first()
 
-        }, BillEntity.new {
-
         }
     )
-    bills.forEach {
-        CourseEntity.new {
-            relatedBillID=it.id
-
-        }
-    }
+//    bills.forEach {
+//        CourseEntity.new {
+//            relatedBillID = it.id
+//
+//        }
+//    }
 }
 

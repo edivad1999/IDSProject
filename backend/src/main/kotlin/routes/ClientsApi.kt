@@ -70,7 +70,7 @@ fun Route.clientsApi() = route("clients") {
                 val course = CourseEntity.findById(request.courseId.toUUID()) ?: CourseEntity.new {
                     this.isSent = false
                     this.setReadyClients(emptyList())
-                    this.relatedBillID = UserEntity.findById(userId)!!.getCurrentOpenBill(null)!!.billId
+                    this.relatedBillID = UserEntity.findById(userId)!!.getCurrentOpenBill(null)!!.id
                 }
                 DishEntity.findById(request.dish.uuid.toUUID())?.let {
                     it.relatedCourseID = course.id
