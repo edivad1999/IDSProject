@@ -37,7 +37,7 @@ repositories {
 }
 buildscript {
     repositories {
-        mavenCentral();
+        mavenCentral()
     }
 
     dependencies {
@@ -113,7 +113,7 @@ tasks.test {
     useJUnitPlatform()
 }
 
-tasks.withType<KotlinCompile>() {
+tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
 }
 tasks.create("stage") {
