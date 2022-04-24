@@ -9,10 +9,7 @@ import io.ktor.routing.*
 import io.ktor.serialization.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import model.dao.BillEntity
-import model.dao.MenuElementEntity
-import model.dao.TableEntity
-import model.dao.UserEntity
+import model.dao.*
 import model.dataClasses.MenuElement
 import model.tables.*
 import org.jetbrains.exposed.sql.Database
@@ -165,6 +162,7 @@ fun Application.generateMockDataDB() = runBlocking {
         mockTables()
         mockUsers()
         mockData()
+        mockDishes()
     }
 
 }
@@ -315,21 +313,25 @@ fun Application.mockData() {
             coveredNumbers = 4
             openedAt = System.currentTimeMillis()
             relatedTable = TableEntity.find { TablesTable.number eq 1 }.first().apply { isOccupied = true }
-
+            this.addUser(UserEntity.find { UsersTable.username eq "utente1Tavolo1"}.first().id.value,"0000")
+            this.addUser(UserEntity.find { UsersTable.username eq "utente2Tavolo1"}.first().id.value,"0000")
         },
         BillEntity.new {
             secretCode = "0001"
             coveredNumbers = 3
             openedAt = System.currentTimeMillis()
             relatedTable = TableEntity.find { TablesTable.number eq 2 }.first().apply { isOccupied = true }
-
+            this.addUser(UserEntity.find { UsersTable.username eq "utente1Tavolo2"}.first().id.value,"0001")
+            this.addUser(UserEntity.find { UsersTable.username eq "utente2Tavolo2"}.first().id.value,"0001")
+            this.addUser(UserEntity.find { UsersTable.username eq "utente3Tavolo2"}.first().id.value,"0001")
         },
         BillEntity.new {
             secretCode = "0002"
             coveredNumbers = 2
             openedAt = System.currentTimeMillis()
             relatedTable = TableEntity.find { TablesTable.number eq 3 }.first().apply { isOccupied = true }
-
+            this.addUser(UserEntity.find { UsersTable.username eq "utente1Tavolo3"}.first().id.value,"0002")
+            this.addUser(UserEntity.find { UsersTable.username eq "utente2Tavolo3"}.first().id.value,"0002")
         },
         BillEntity.new {
             secretCode = "0003"
@@ -342,6 +344,7 @@ fun Application.mockData() {
             secretCode = "0004"
             coveredNumbers = 5
             openedAt = System.currentTimeMillis()
+            closedAt = System.currentTimeMillis() + 1000
             relatedTable = TableEntity.find { TablesTable.number eq 5 }.first().apply { isOccupied = false }
             closedAt =System.currentTimeMillis()+1000
 
@@ -355,11 +358,51 @@ fun Application.mockData() {
         }
 
     )
-//    bills.forEach {
-//        CourseEntity.new {
-//            relatedBillID = it.id
-//
-//        }
-//    }
+    bills.forEach {
+       CourseEntity.new {
+           relatedBillID = it.id
+           number = 1
+           isSent = true
+           sentAt = System.currentTimeMillis()
+       }
+        CourseEntity.new {
+            relatedBillID = it.id
+            number = 2
+            isSent = false
+
+        }
+        CourseEntity.new {
+            relatedBillID = it.id
+            number = 3
+            isSent = true
+            sentAt = System.currentTimeMillis()
+        }
+    }
+}
+
+fun Application.mockDishes(){
+    val lorem: Lorem by instance()
+    DishEntity.new {
+        relatedClient = UserEntity.find { UsersTable.username eq "utente1Tavolo1" }.first()
+        relatedCourseID = UserEntity.find { UsersTable.username eq "utente1Tavolo1" }.first().getCurrentOpenBill(null)!!.courses.filter { it.number == 1 }.first().id
+        notes = lorem.getWords(7)
+        menuElement = MenuElementEntity.find { MenuElementTable.name eq "Tagliatelle al Ragù"}.first()
+        state = DishState.DELIVERED.name
+    }
+    DishEntity.new {
+        relatedClient = UserEntity.find { UsersTable.username eq "utente2Tavolo1" }.first()
+        relatedCourseID = UserEntity.find { UsersTable.username eq "utente2Tavolo1" }.first().getCurrentOpenBill(null)!!.courses.filter { it.number == 2 }.first().id
+        notes = lorem.getWords(7)
+        menuElement = MenuElementEntity.find { MenuElementTable.name eq "Tortellini in Brodo"}.first()
+        state = DishState.DELIVERED.name
+    }
+    DishEntity.new {
+        relatedClient = UserEntity.find { UsersTable.username eq "utente1Tavolo1" }.first()
+        relatedCourseID = UserEntity.find { UsersTable.username eq "utente1Tavolo1" }.first().getCurrentOpenBill(null)!!.courses.filter { it.number == 2 }.first().id
+        notes = lorem.getWords(7)
+        menuElement = MenuElementEntity.find { MenuElementTable.name eq "Tortellini in Brodo"}.first()
+        state = DishState.WAITING.name
+    }
+
 }
 

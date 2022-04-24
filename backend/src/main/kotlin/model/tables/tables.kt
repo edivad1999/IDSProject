@@ -46,7 +46,7 @@ object CoursesTable : UUIDTable("courses", "uuid") {
 }
 
 object DishesTable : UUIDTable("dishes", "uuid") {
-    val relatedCourse = reference("relatedCourse", BillsTable)
+    val relatedCourse = reference("relatedCourse", CoursesTable)
     val relatedClient = reference("relatedClient", UsersTable).nullable()
     val notes = varchar("notes", 600)
     val menuElement = reference("menuElement", MenuElementTable)
