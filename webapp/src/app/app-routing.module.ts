@@ -19,6 +19,7 @@ const routes: Routes = [
   {path: 'setMenu', component: SetMenuComponent, canActivate: [AuthGuard, AuthorizeRole], data: {role: Role.MANAGER}},
   {path: 'setTables', component: SetTablesComponent, canActivate: [AuthGuard, AuthorizeRole], data: {role: Role.MANAGER}},
   {path: 'bill', component: ManageBillComponent, canActivate: [AuthGuard, AuthorizeExactlyRole], data: {role: Role.CLIENT}},
+  {path: 'menu', component: ManageBillComponent, canActivate: [AuthGuard, AuthorizeExactlyRole], data: {role: Role.CLIENT}},
 
 ];
 

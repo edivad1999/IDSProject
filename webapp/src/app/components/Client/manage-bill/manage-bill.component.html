@@ -1,1 +1,29 @@
-<p>manage-bill works!</p>
+<div *ngIf="!bill">
+  <mat-progress-bar mode="query"></mat-progress-bar>
+</div>
+<div *ngIf="bill">
+  <lib-central-column>
+    <mat-card style="padding: 0px">
+      <button style="width: 100%" mat-raised-button color="accent" [routerLink]="'/menu'"><mat-icon>restaurant_menu</mat-icon> Vai al menù</button>
+      <div style="padding: 16px">
+        <mat-card-title>
+          <div style="display: flex; align-content: baseline">
+            <mat-icon>table_restaurant</mat-icon>
+            Tavolo {{bill.relatedTable.number}}
+          </div>
+
+        </mat-card-title>
+        <mat-card-subtitle style="margin-top: 6px">
+          Siete arrivati alle {{getDateStringFromInstant(bill.openedAt)}}
+        </mat-card-subtitle>
+        <mat-divider>
+        </mat-divider>
+        <mat-card-content>
+
+
+        </mat-card-content>
+      </div>
+    </mat-card>
+
+  </lib-central-column>
+</div>

@@ -27,7 +27,7 @@ export class ClientHomeComponent extends SubscriberContextComponent implements O
   ngOnInit(): void {
     this.subscribeWithContext(this.repo.getBill(), bill => {
       this.currentBill = bill;
-      if (bill != null) {
+      if (this.currentBill != null) {
         this.router.navigate(['/bill']);
       } else {
         this.subscribeWithContext(this.repo.getMenu(), menu => {

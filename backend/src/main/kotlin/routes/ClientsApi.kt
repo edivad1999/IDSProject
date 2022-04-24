@@ -10,7 +10,7 @@ import io.ktor.routing.*
 import kotlinx.serialization.Serializable
 import model.dao.*
 import model.dataClasses.Dish
-import model.tables.TablesTable
+import model.tables.BillsTable
 import model.tables.UsersTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -40,14 +40,17 @@ fun Route.clientsApi() = route("clients") {
         post("joinTable") {
             val req = call.receive<BillJoinRequest>()
             val res = transaction(db) {
-                val user = UserEntity.find { UsersTable.username eq call.principal<BasePrincipal>()!!.userId }.first()
-                val tableNumber = TableEntity.find { TablesTable.number eq req.tableNumber }.firstOrNull()!!.number
-                val bill = BillEntity.all().firstOrNull {
-                    it.relatedTable.number == tableNumber &&
-                            it.relatedTable.isOccupied &&
-                            !it.users.map { u -> u.simpleSerialize() }.contains(user.simpleSerialize())
-                }!!
-                if (bill.addUser(user.id.value, req.secretCode)) HttpStatusCode.OK else HttpStatusCode.BadRequest //Non sono sicuro si comporti come previsto
+                val id = UserEntity.find { UsersTable.username eq call.principal<BasePrincipal>()!!.userId }.first().id.value
+                val bill = BillEntity.find {
+                    BillsTable.closedAt.isNull()
+                }.firstOrNull {
+                    it.relatedTable.number == req.tableNumber
+                            && it.relatedTable.isOccupied &&
+                            it.users.none { userEntity -> userEntity.id.value == id }
+                }
+                bill?.let {
+                    if (it.addUser(id, req.secretCode)) HttpStatusCode.OK else HttpStatusCode.BadRequest
+                } ?: HttpStatusCode.BadRequest
             }
             call.respond(res)
         }

@@ -37,9 +37,10 @@ object TablesTable : UUIDTable("tables", "uuid") {
 
 object CoursesTable : UUIDTable("courses", "uuid") {
     val relatedBill = reference("relatedBill", BillsTable)
-    val isSpedita = bool("isSpedita")
-    val speditaAt = long("speditaAt").nullable()
+    val isSent = bool("isSpedita")
+    val sentAt = long("speditaAt").nullable()
     val readyClients = varchar("readyClients", 37001).nullable()
+    val number=integer("number")
     // stiamo settando un limite di circa 1000 massimi pronti  idealmente si potrebbe fare una table di mapping
 
 }

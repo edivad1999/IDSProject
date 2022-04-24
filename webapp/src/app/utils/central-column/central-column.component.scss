@@ -8,6 +8,7 @@
 }
 
 .content-container {
+  min-width: 33vw;
   max-width: 1096px;
   align-self: center;
 }
@@ -17,11 +18,31 @@
 }
 
 .content-container-width-small {
-  margin: 16px;
+  max-width: 98vw;
+  margin: 16px 1px;
 }
 
 @media screen and (max-width: 600px) {
   .content-container-width {
+    max-width: 98vw;
+    margin: 16px 1px;
+  }
+  .central-column {
+    display: flex;
+    justify-content: center;
+    min-width: 98vw;
+  }
+
+
+}
+@media screen and (min-width: 601px) and (max-width: 1079px) {
+  .content-container-width {
+    max-width: 700px;
     margin: 16px;
+  }
+}
+@media screen and (min-width: 1080px) {
+  .content-container-width {
+    max-width: 1096px;
   }
 }

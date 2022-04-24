@@ -343,6 +343,7 @@ fun Application.mockData() {
             coveredNumbers = 5
             openedAt = System.currentTimeMillis()
             relatedTable = TableEntity.find { TablesTable.number eq 5 }.first().apply { isOccupied = false }
+            closedAt =System.currentTimeMillis()+1000
 
         },
         BillEntity.new {

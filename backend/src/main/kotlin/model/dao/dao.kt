@@ -84,8 +84,9 @@ class CourseEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     companion object : UUIDEntityClass<CourseEntity>(CoursesTable)
 
     var relatedBillID by CoursesTable.relatedBill
-    var isSent by CoursesTable.isSpedita
-    var sentAt by CoursesTable.speditaAt
+    var isSent by CoursesTable.isSent
+    var sentAt by CoursesTable.sentAt
+    var number by CoursesTable.number
     private var readyClients by CoursesTable.readyClients //È privato perché ci si accede con le funzioni e non va mai toccato a mano
     val dishes by DishEntity referrersOn DishesTable.relatedCourse
 
@@ -119,6 +120,10 @@ class DishEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     var menuElement by MenuElementEntity referencedOn DishesTable.menuElement
     var state by DishesTable.state
     var relatedCourseID by DishesTable.relatedCourse
+
+    fun getRelatedCourse() = CourseEntity.findById(this.relatedCourseID)
+
+
     fun getState() = DishState.valueOf(state)
     fun serialize() = Dish(uuid = id.value.toString(), notes = notes, relatedClient = relatedClient?.simpleSerialize(), menuElement = menuElement.serialize(), state = getState())
 
