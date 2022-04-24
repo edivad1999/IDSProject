@@ -2,7 +2,6 @@ package routes
 
 import instance
 import io.ktor.application.*
-import io.ktor.auth.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
@@ -14,7 +13,6 @@ import model.tables.BillsTable
 import model.tables.TablesTable
 import model.tables.UsersTable
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import routes.auth.Role
 import routes.auth.authenticate
@@ -70,20 +68,21 @@ fun Route.waitersApi() = route("waiter") {
         post("addToCourse") {
             val request = call.receive<AddToCourseWaiterRequest>()
             transaction(db) {
-                val course = CourseEntity.findById(request.courseId.toUUID()) ?: CourseEntity.new {
-                    this.isSent = false
-                    this.setReadyClients(emptyList())
-                    this.relatedBillID = BillEntity.findById(request.billId.toUUID())!!.id
+                BillEntity.findById(request.billId.toUUID())!!.let { bill ->
+                    val course = bill.courses.firstOrNull { it.number == request.courseNumber } ?: CourseEntity.new {
+                        this.isSent = false
+                        this.setReadyClients(emptyList())
+                        this.number = request.courseNumber
+                        this.relatedBillID = bill.id
+                    }
+                    DishEntity.new {
+                        this.menuElement = MenuElementEntity.findById(request.dish.menuElement.uuid.toUUID())!!
+                        this.notes = request.dish.notes
+                        this.state = DishState.WAITING.name
+                        this.relatedCourseID = course.id
+                    }
                 }
-                DishEntity.findById(request.dish.uuid.toUUID())?.let {
-                    it.relatedCourseID = course.id
-                } ?: DishEntity.new {
-                    this.menuElement = MenuElementEntity.findById(request.dish.menuElement.uuid.toUUID())!!
-                    this.notes = request.dish.notes
-                    this.relatedClient = UserEntity.find { UsersTable.username eq request.dish.relatedClient?.username!! }.firstOrNull()
-                    this.state = DishState.WAITING.name
-                    this.relatedCourseID = course.id
-                }
+
             }
             call.respond(HttpStatusCode.OK)
         }
@@ -123,11 +122,13 @@ fun Route.waitersApi() = route("waiter") {
 
     }
 }
+
 @Serializable
 data class SimpleStringResponse(val responseString: String)
+
 @Serializable
 data class AddToCourseWaiterRequest(
     val dish: Dish,
-    val courseId: String,
+    val courseNumber: Int,
     val billId: String,
 )

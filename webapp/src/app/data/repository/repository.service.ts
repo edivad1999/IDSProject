@@ -91,8 +91,8 @@ export class RepositoryService {
 
   }
 
-  addToCourse(dish: Dish, courseId: string): Observable<boolean> {
-    return this.datasource.addToCourse(dish, courseId);
+  addToCourse(dish: Dish, courseNumber: number): Observable<boolean> {
+    return this.datasource.addToCourse(dish, courseNumber);
 
   }
 
@@ -127,8 +127,8 @@ export class RepositoryService {
 
   }
 
-  waiterAddToCourse(dish: Dish, courseId: string, billId: string): Observable<boolean> {
-    return this.datasource.waiterAddToCourse(dish, courseId, billId);
+  waiterAddToCourse(dish: Dish, courseNumber: number, billId: string): Observable<boolean> {
+    return this.datasource.waiterAddToCourse(dish, courseNumber, billId);
 
   }
 

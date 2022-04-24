@@ -1,0 +1,44 @@
+<mat-toolbar color="accent" style="height: fit-content">
+  <div style="width:100%;height:100%;display: flex; justify-content: space-between; align-items: center">
+    <button mat-icon-button  (click)="leftAction()">
+      <mat-icon>
+        {{selectIconLeft()}}
+      </mat-icon>
+    </button>
+
+    <p style="padding: 12px;    word-break: break-word;
+    white-space: normal;">
+      Aggiungi {{menuElement.name}}
+
+    </p>
+    <button mat-icon-button [disabled]="!formValid()" (click)="rightAction()">
+      <mat-icon>
+        {{selectIconRight()}}
+      </mat-icon>
+    </button>
+
+  </div>
+
+
+</mat-toolbar>
+
+<lib-central-column>
+  <div *ngIf="step=='INSERTING'" style="width: 100%;display: flex; justify-content: center; flex-direction: column;align-items: center">
+    <mat-form-field style="max-width: 300px; width: 100% ; min-width: 200px">
+      <mat-label>Scegli la portata</mat-label>
+      <mat-select [formControl]="courseNumber">
+        <mat-select-trigger *ngIf="courseNumber.value">
+          Portata {{courseNumber.value}}
+        </mat-select-trigger>
+        <mat-option *ngFor="let selection of courseSelection" [value]="selection.course" [disabled]="!selection.clickable">{{selection.displayValue}}</mat-option>
+      </mat-select>
+      <mat-error>
+        Devi selezionare la portata
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field style="max-width: 300px; width: 100% ; min-width: 200px">
+      <mat-label>Aggiungi note</mat-label>
+      <textarea matInput style="resize: none" [rows]="3" [formControl]="notes"></textarea>
+    </mat-form-field>
+  </div>
+</lib-central-column>

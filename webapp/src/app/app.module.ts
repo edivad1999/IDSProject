@@ -45,6 +45,9 @@ import {SetTablesComponent} from './components/Manager/set-tables/set-tables.com
 import { ManageBillComponent } from './components/Client/manage-bill/manage-bill.component';
 import { MenuReadonlyComponent } from './components/Common/menu-readonly/menu-readonly.component';
 import { BillAssociationDialogComponent } from './components/Client/client-home/bill-association-dialog/bill-association-dialog.component';
+import { MenuComponent } from './components/Common/menu/menu.component';
+import { AddMenuElementBottomSheetComponent } from './components/Common/menu/add-menu-element-bottom-sheet/add-menu-element-bottom-sheet.component';
+import {MatBottomSheet, MatBottomSheetModule} from '@angular/material/bottom-sheet';
 
 @NgModule({
   declarations: [
@@ -61,6 +64,8 @@ import { BillAssociationDialogComponent } from './components/Client/client-home/
     ManageBillComponent,
     MenuReadonlyComponent,
     BillAssociationDialogComponent,
+    MenuComponent,
+    AddMenuElementBottomSheetComponent,
 
   ],
   imports: [
@@ -94,7 +99,8 @@ import { BillAssociationDialogComponent } from './components/Client/client-home/
     MatAutocompleteModule,
     MatMenuModule,
     MatChipsModule,
-    MatListModule
+    MatListModule,
+    MatBottomSheetModule,
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
   ],

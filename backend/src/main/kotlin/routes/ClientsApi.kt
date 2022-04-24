@@ -73,22 +73,25 @@ fun Route.clientsApi() = route("clients") {
         }
         post("addToCourse") {
             val request = call.receive<AddToCourseRequest>()
-            val userId = call.principal<BasePrincipal>()!!.userId.toUUID()
+            val userId = call.principal<BasePrincipal>()!!.userId
             transaction(db) {
-                val course = CourseEntity.findById(request.courseId.toUUID()) ?: CourseEntity.new {
-                    this.isSent = false
-                    this.setReadyClients(emptyList())
-                    this.relatedBillID = UserEntity.findById(userId)!!.getCurrentOpenBill(null)!!.id
+                val user = userId.findUser()
+                user.getCurrentOpenBill()!!.let { bill ->
+                    val course = bill.courses.firstOrNull { it.number == request.courseNumber } ?: CourseEntity.new {
+                        this.isSent = false
+                        this.setReadyClients(emptyList())
+                        this.number = request.courseNumber
+                        this.relatedBillID = bill.id
+                    }
+                    DishEntity.new {
+                        this.menuElement = MenuElementEntity.findById(request.dish.menuElement.uuid.toUUID())!!
+                        this.notes = request.dish.notes
+                        this.relatedClient = user
+                        this.state = DishState.WAITING.name
+                        this.relatedCourseID = course.id
+                    }
                 }
-                DishEntity.findById(request.dish.uuid.toUUID())?.let {
-                    it.relatedCourseID = course.id
-                } ?: DishEntity.new {
-                    this.menuElement = MenuElementEntity.findById(request.dish.menuElement.uuid.toUUID())!!
-                    this.notes = request.dish.notes
-                    this.relatedClient = UserEntity.find { UsersTable.username eq request.dish.relatedClient?.username!! }.firstOrNull()
-                    this.state = DishState.WAITING.name
-                    this.relatedCourseID = course.id
-                }
+
             }
             call.respond(HttpStatusCode.OK)
         }
@@ -127,5 +130,9 @@ data class EditDishRequest(
 @Serializable
 data class AddToCourseRequest(
     val dish: Dish,
-    val courseId: String,
+    val courseNumber: Int,
 )
+
+fun String.findUser(): UserEntity {
+    return UserEntity.find { UsersTable.username eq this@findUser }.first()
+}

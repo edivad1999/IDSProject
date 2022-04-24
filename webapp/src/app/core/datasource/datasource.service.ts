@@ -104,10 +104,10 @@ export class DatasourceService {
     );
   }
 
-  addToCourse(dish: Dish, courseId: string): Observable<boolean> {
+  addToCourse(dish: Dish, courseNumber: number): Observable<boolean> {
     return this.httpClient.post(
       this.endpoints.addToCourseUrl(),
-      {dish, courseId}, {observe: 'response'}).pipe(
+      {dish, courseNumber}, {observe: 'response'}).pipe(
       map((response) => response.status === 200),
       catchError(err => {
         console.error(err);
@@ -165,9 +165,9 @@ export class DatasourceService {
     return this.httpClient.get<Bill>(this.endpoints.waiterGetBillUrl(billId));
   }
 
-  waiterAddToCourse(dish: Dish, courseId: string, billId: string): Observable<boolean> {
+  waiterAddToCourse(dish: Dish, courseNumber: number, billId: string): Observable<boolean> {
     return this.httpClient.post(this.endpoints.waiterAddToCourseUrl(),
-      {dish, courseId, billId},
+      {dish, courseNumber, billId},
       {observe: 'response'}).pipe(
       map((response) => response.status === 200),
       catchError(err => {

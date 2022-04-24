@@ -44,6 +44,7 @@ export interface Table {
 }
 
 export interface Course {
+  number: number;
   isSent: boolean;
   sentAt?: number;
   readyClients: SimpleUser[];

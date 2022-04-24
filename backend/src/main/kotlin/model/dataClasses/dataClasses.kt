@@ -41,6 +41,7 @@ data class Table(
 @Serializable
 data class Course(
     val isSent: Boolean,
+    val number: Int,
     val sentAt: Long?,
     val readyClients: List<SimpleUser>,
     val dishes: List<Dish>,

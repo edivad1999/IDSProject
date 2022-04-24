@@ -20,11 +20,12 @@ class UserEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
 
     fun getRole(): Role = Role.valueOf(role)
 
+
     /**4
      * If uuid parameter is given it returns the bill that matches with the uuid and is not closed, if the uuid is not passed it returns the last bill that is still open.
      * if null is returned you may have not any open bill or any open bill that matches with param
      */
-    fun getCurrentOpenBill(uuid: UUID?): BillEntity? =
+    fun getCurrentOpenBill(uuid: UUID? = null): BillEntity? =
         if (uuid != null) billHistory.firstOrNull { it.id.value == uuid && it.closedAt == null } else billHistory.sortedByDescending { it.openedAt }.firstOrNull { it.closedAt == null }
 
 
@@ -109,7 +110,7 @@ class CourseEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     }
 
 
-    fun serialize() = Course(isSent = isSent, sentAt = sentAt, readyClients = getReadyClients().map { it.simpleSerialize() }, dishes = dishes.map { it.serialize() })
+    fun serialize() = Course(number=number,isSent = isSent, sentAt = sentAt, readyClients = getReadyClients().map { it.simpleSerialize() }, dishes = dishes.map { it.serialize() })
 }
 
 class DishEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
