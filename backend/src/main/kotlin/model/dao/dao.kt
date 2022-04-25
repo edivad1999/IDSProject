@@ -91,7 +91,7 @@ class CourseEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     private var readyClients by CoursesTable.readyClients //È privato perché ci si accede con le funzioni e non va mai toccato a mano
     val dishes by DishEntity referrersOn DishesTable.relatedCourse
 
-    fun getReadyClients() = (readyClients?.split(",") ?: emptyList()).mapNotNull { UserEntity.findById(it.toUUID()) }
+    private fun getReadyClients() = readyClients?.takeIf { it.isNotEmpty() }?.split(",")?.map { UserEntity.findById(it.toUUID())!! } ?: emptyList()
     fun setReadyClients(users: List<UserEntity>) {
         readyClients = users.map { it.id.value }.joinToString { "," }
     }
@@ -110,7 +110,7 @@ class CourseEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     }
 
 
-    fun serialize() = Course(number=number,isSent = isSent, sentAt = sentAt, readyClients = getReadyClients().map { it.simpleSerialize() }, dishes = dishes.map { it.serialize() })
+    fun serialize() = Course(number = number, isSent = isSent, sentAt = sentAt, readyClients = getReadyClients().map { it.simpleSerialize() }, dishes = dishes.map { it.serialize() })
 }
 
 class DishEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {

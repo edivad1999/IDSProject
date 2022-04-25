@@ -27,7 +27,7 @@ export class MenuComponent extends SubscriberContextComponent implements OnInit 
     super();
   }
 
-  ngOnInit(): void {
+  refresh(): void {
     this.subscribeWithContext(this.repo.role.asObservable(), role => {
       this.role = role;
       if (this.role === Role.CLIENT) {
@@ -52,6 +52,10 @@ export class MenuComponent extends SubscriberContextComponent implements OnInit 
 
   }
 
+  ngOnInit(): void {
+    this.refresh();
+  }
+
   addToBill(menuElement: MenuElement): void {
 
     if (this.role != null && this.bill) {
@@ -60,7 +64,8 @@ export class MenuComponent extends SubscriberContextComponent implements OnInit 
         bill: this.bill,
         menuElement
       };
-      const bottomSheetRef = this.bottomSheet.open(AddMenuElementBottomSheetComponent, {data,});
+      const bottomSheetRef = this.bottomSheet.open(AddMenuElementBottomSheetComponent, {data});
+      this.subscribeWithContext(bottomSheetRef.afterDismissed(), it => this.refresh());
 
     }
   }

@@ -82,6 +82,7 @@ fun Route.clientsApi() = route("clients") {
                         this.setReadyClients(emptyList())
                         this.number = request.courseNumber
                         this.relatedBillID = bill.id
+
                     }
                     DishEntity.new {
                         this.menuElement = MenuElementEntity.findById(request.dish.menuElement.uuid.toUUID())!!

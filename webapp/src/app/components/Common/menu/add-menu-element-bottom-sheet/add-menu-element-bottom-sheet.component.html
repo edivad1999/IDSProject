@@ -1,6 +1,6 @@
 <mat-toolbar color="accent" style="height: fit-content">
   <div style="width:100%;height:100%;display: flex; justify-content: space-between; align-items: center">
-    <button mat-icon-button  (click)="leftAction()">
+    <button mat-icon-button (click)="leftAction()">
       <mat-icon>
         {{selectIconLeft()}}
       </mat-icon>
@@ -11,34 +11,68 @@
       Aggiungi {{menuElement.name}}
 
     </p>
-    <button mat-icon-button [disabled]="!formValid()" (click)="rightAction()">
+    <button mat-icon-button [disabled]="!formValid()" (click)="rightAction()" *ngIf="step!=='DONE'">
       <mat-icon>
         {{selectIconRight()}}
       </mat-icon>
     </button>
+    <span *ngIf="step=='DONE'" style="padding: 12px">
+
+    </span>
 
   </div>
 
 
 </mat-toolbar>
 
-<lib-central-column>
-  <div *ngIf="step=='INSERTING'" style="width: 100%;display: flex; justify-content: center; flex-direction: column;align-items: center">
-    <mat-form-field style="max-width: 300px; width: 100% ; min-width: 200px">
-      <mat-label>Scegli la portata</mat-label>
-      <mat-select [formControl]="courseNumber">
-        <mat-select-trigger *ngIf="courseNumber.value">
-          Portata {{courseNumber.value}}
-        </mat-select-trigger>
-        <mat-option *ngFor="let selection of courseSelection" [value]="selection.course" [disabled]="!selection.clickable">{{selection.displayValue}}</mat-option>
-      </mat-select>
-      <mat-error>
-        Devi selezionare la portata
-      </mat-error>
-    </mat-form-field>
-    <mat-form-field style="max-width: 300px; width: 100% ; min-width: 200px">
-      <mat-label>Aggiungi note</mat-label>
-      <textarea matInput style="resize: none" [rows]="3" [formControl]="notes"></textarea>
-    </mat-form-field>
+<lib-central-column style="padding: 12px;justify-content: center">
+  <div style="width: 100%;display: flex;flex-direction: column;align-items: center">
+    <div *ngIf="step=='INSERTING'" style="width: 90%;display: flex; justify-content: center; flex-direction: column;align-items: center">
+      <mat-card style="width: 100%;display: flex; justify-content: center; flex-direction: column;align-items: center">
+        <mat-card-title style="margin-bottom: 12px">
+          Perfeziona la tua aggiunta!
+          <mat-divider style=" margin-top: 18px"></mat-divider>
+
+        </mat-card-title>
+        <mat-form-field style="max-width: 300px; width: 100% ; min-width: 200px; margin-top: 18px">
+          <mat-label>Scegli la portata</mat-label>
+          <mat-select [formControl]="courseNumber">
+            <mat-select-trigger *ngIf="courseNumber.value">
+              Portata {{courseNumber.value}}
+            </mat-select-trigger>
+            <mat-option *ngFor="let selection of courseSelection" [value]="selection.course" [disabled]="!selection.clickable">{{selection.displayValue}}</mat-option>
+          </mat-select>
+          <mat-error>
+            Devi selezionare la portata
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field style="max-width: 300px; width: 100% ; min-width: 200px">
+          <mat-label>Aggiungi note</mat-label>
+          <textarea matInput style="resize: none" [rows]="3" [formControl]="notes"></textarea>
+        </mat-form-field>
+      </mat-card>
+    </div>
+    <div *ngIf="step==='CONFIRMING'" style="width: 90%;display: flex; justify-content: center; flex-direction: column;align-items: center">
+      <mat-card style="width: 100%;display: flex; justify-content: center; flex-direction: column;align-items: center">
+        <mat-card-title style="margin-bottom: 12px">
+          Conferma la tua aggiunta!
+          <mat-divider style=" margin-top: 18px"></mat-divider>
+        </mat-card-title>
+        <mat-card-subtitle style="margin-top: 18px">
+          Stai aggiungendo alla portata {{courseNumber.value}} il piatto {{menuElement.name}}, prezzo: {{menuElement.price}}€
+        </mat-card-subtitle>
+      </mat-card>
+    </div>
+    <div *ngIf="step==='DONE'" style="width: 90%;display: flex; justify-content: center; flex-direction: column;align-items: center">
+      <mat-card style="width: 100%;display: flex; justify-content: center; flex-direction: column;align-items: center">
+        <mat-card-title>
+          Piatto aggiunto correttamente
+        </mat-card-title>
+        <mat-card-actions align="end">
+          <button mat-raised-button color="accent" (click)="goToMenu()">Torna al menù</button>
+          <button mat-raised-button color="primary" (click)="goToBill()">Vai al conto</button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
   </div>
 </lib-central-column>

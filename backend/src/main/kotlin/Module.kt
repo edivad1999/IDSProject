@@ -82,7 +82,7 @@ fun Application.managerModule() {
 
 fun Application.init() = launch {
     initDb()
-//    generateMockDataDB()
+    generateMockDataDB()
 }
 
 

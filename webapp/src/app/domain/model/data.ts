@@ -9,10 +9,8 @@ export enum Role {
 
 }
 
-export enum DishState {
-  WAITING, PREPARING, DELIVERED, PROBLEM
+export type DishState = 'WAITING' | 'PREPARING' | 'DELIVERED' | 'PROBLEM';
 
-}
 
 export interface User {
   username: string;
@@ -54,7 +52,7 @@ export interface Course {
 export interface Dish {
   uuid: string;
   notes: string;
-  relatedClient?: SimpleUser;
+  relatedClient: SimpleUser | null;
   menuElement: MenuElement;
   state: DishState;
 }
