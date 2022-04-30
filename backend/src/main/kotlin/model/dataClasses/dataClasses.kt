@@ -23,6 +23,7 @@ data class SimpleUser(
 
 @Serializable
 data class Bill(
+    val id:String,
     val secretCode: String,
     val coveredNumbers: Int,
     val openedAt: Long,

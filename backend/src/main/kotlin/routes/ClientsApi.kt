@@ -4,10 +4,16 @@ import instance
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.*
+import io.ktor.http.cio.websocket.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import io.ktor.util.*
+import io.ktor.websocket.*
+import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import model.dao.*
 import model.dataClasses.Dish
 import model.tables.BillsTable
@@ -27,6 +33,12 @@ fun Route.clientsApi() = route("clients") {
                 if (user != null) {
                     SimpleStringResponse(user.role)
                 } else HttpStatusCode.BadRequest
+            })
+
+        }
+        get("user") {
+            call.respond(transaction(db) {
+                call.principal<BasePrincipal>()!!.userId.findUser().simpleSerialize()
             })
 
         }
@@ -74,7 +86,7 @@ fun Route.clientsApi() = route("clients") {
         post("addToCourse") {
             val request = call.receive<AddToCourseRequest>()
             val userId = call.principal<BasePrincipal>()!!.userId
-            transaction(db) {
+            val res = transaction(db) {
                 val user = userId.findUser()
                 user.getCurrentOpenBill()!!.let { bill ->
                     val course = bill.courses.firstOrNull { it.number == request.courseNumber } ?: CourseEntity.new {
@@ -91,6 +103,7 @@ fun Route.clientsApi() = route("clients") {
                         this.state = DishState.WAITING.name
                         this.relatedCourseID = course.id
                     }
+                    course.relatedBillID.value
                 }
 
             }
@@ -113,6 +126,28 @@ fun Route.clientsApi() = route("clients") {
             call.respond(HttpStatusCode.OK)
         }
     }
+    route("ws") {
+        webSocket("{billId}") {
+            val billId: String by call.parameters
+            val json: Json by instance()
+            while (true) {
+                delay(2000)
+
+                val bill = transaction(db) {
+                    BillEntity.findById(billId.toUUID())?.serialize()
+                }
+                if (bill?.users?.map { it.username }?.contains(call.principal<BasePrincipal>()?.userId) == true) {
+                    close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "Order not of the user"))
+                    return@webSocket
+                }
+                send(json.encodeToString(bill))
+
+
+            }
+
+        }
+    }
+
 
 }
 

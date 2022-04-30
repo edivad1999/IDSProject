@@ -4,7 +4,10 @@
 <div *ngIf="bill">
   <lib-central-column>
     <mat-card style="padding: 0px">
-      <button style="width: 100%" mat-raised-button color="accent" [routerLink]="'/menu'"><mat-icon>restaurant_menu</mat-icon> Vai al menù</button>
+      <button style="width: 100%" mat-raised-button color="accent" [routerLink]="'/menu'">
+        <mat-icon>restaurant_menu</mat-icon>
+        Vai al menù
+      </button>
       <div style="padding: 16px">
         <mat-card-title>
           <div style="display: flex; align-content: baseline">
@@ -18,7 +21,18 @@
         </mat-card-subtitle>
         <mat-divider>
         </mat-divider>
-        <mat-card-content>
+        <mat-card-content style="margin-top: 24px">
+
+          <mat-accordion>
+            <mat-expansion-panel *ngFor="let course of bill.courses" (opened)="this.lastOpenNumber=course.number" [expanded]="this.lastOpenNumber === course.number">
+              <mat-expansion-panel-header>
+                <div>Portata {{course.number}} </div>
+              </mat-expansion-panel-header>
+              <div *ngFor="let dish of course.dishes">
+                {{dish.menuElement.name}}
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
 
 
         </mat-card-content>

@@ -1,11 +1,12 @@
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
-import {catchError, map} from 'rxjs/operators';
+import {catchError, map, mergeMap} from 'rxjs/operators';
 import {JwtHandlerService} from '../../utils/jwt-handler.service';
 import {Endpoints} from '../endpoints/endpoints';
 import {HttpClient} from '@angular/common/http';
 import {AuthTokenData, SimpleStringResponse} from '../../data/requests';
-import {Bill, Course, Dish, DishState, MenuElement, Role, Table} from '../../domain/model/data';
+import {Bill, Course, Dish, DishState, MenuElement, Role, SimpleUser, Table} from '../../domain/model/data';
+import {webSocket} from 'rxjs/webSocket';
 
 
 @Injectable({
@@ -260,4 +261,15 @@ export class DatasourceService {
   }
 
 
+  getUser(): Observable<SimpleUser> {
+    return this.httpClient.get(this.endpoints.getUserUrl(), {observe: 'response'}).pipe(
+      map((response) => response.body as SimpleUser),
+    );
+  }
+
+  billFlow(billId: string): Observable<Bill> {
+    return this.jwtHandler.token().pipe(
+      mergeMap(t => webSocket<Bill>(this.endpoints.billFlowUrl(billId, t as string)))
+    );
+  }
 }

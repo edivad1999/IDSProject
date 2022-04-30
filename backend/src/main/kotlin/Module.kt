@@ -7,6 +7,7 @@ import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.routing.*
 import io.ktor.serialization.*
+import io.ktor.websocket.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import model.dao.*
@@ -46,7 +47,7 @@ fun Application.managerModule() {
         exposedHeaders.add("Content-Disposition")
 //        allowSameOrigin=true
     }
-
+    install(WebSockets)
     install(Authentication) {
         val credentialVerifierJWT: JWTCredentialsVerifier by di().instance()
         Role.values().forEach { role ->
@@ -82,7 +83,7 @@ fun Application.managerModule() {
 
 fun Application.init() = launch {
     initDb()
-    generateMockDataDB()
+//    generateMockDataDB()
 }
 
 

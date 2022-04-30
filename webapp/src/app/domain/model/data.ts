@@ -27,6 +27,7 @@ export interface SimpleUser {
 }
 
 export interface Bill {
+  id: string;
   secretCode: string;
   coveredNumbers: number;
   openedAt: number;

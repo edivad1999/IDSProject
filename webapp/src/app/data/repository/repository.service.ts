@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {DatasourceService} from '../../core/datasource/datasource.service';
 import {Observable, of, ReplaySubject} from 'rxjs';
-import {AuthState, Bill, Course, Dish, DishState, MenuElement, Role, Table} from '../../domain/model/data';
+import {AuthState, Bill, Course, Dish, DishState, MenuElement, Role, SimpleUser, Table} from '../../domain/model/data';
 import {catchError, map, mergeMap, tap} from 'rxjs/operators';
 import {AuthTokenData} from '../requests';
 import {JwtHandlerService} from '../../utils/jwt-handler.service';
@@ -187,4 +187,11 @@ export class RepositoryService {
 
   }
 
+  getUser(): Observable<SimpleUser> {
+    return this.datasource.getUser();
+  }
+
+  billFlow(billId: string): Observable<Bill> {
+    return this.datasource.billFlow(billId)
+  }
 }

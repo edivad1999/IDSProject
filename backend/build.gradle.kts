@@ -74,6 +74,7 @@ dependencies {
     //ktor
     api("io.ktor", "ktor-serialization", ktorVersion)
     implementation("io.ktor:ktor-server-cio:$ktorVersion")
+    implementation("io.ktor:ktor-websockets:$ktorVersion")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
     implementation("io.ktor:ktor-auth:$ktorVersion")

@@ -48,7 +48,9 @@ class BillEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     var relatedTable by TableEntity referencedOn BillsTable.relatedTable
     val users by UserEntity via UsersBillsTable
     val courses by CourseEntity referrersOn CoursesTable.relatedBill
-    fun serialize() = Bill(secretCode = secretCode,
+    fun serialize() = Bill(
+
+        secretCode = secretCode, id = id.value.toString(),
         coveredNumbers = coveredNumbers,
         openedAt = openedAt,
         closedAt = closedAt,
