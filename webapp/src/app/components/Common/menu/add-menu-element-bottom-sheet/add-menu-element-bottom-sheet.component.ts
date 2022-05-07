@@ -1,7 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef} from '@angular/material/bottom-sheet';
 import {AddToBillWrappedData} from '../menu.component';
-import {Bill, Dish, MenuElement, Role} from '../../../../domain/model/data';
+import {Bill, Dish, MenuElement, Role, SimpleUser} from '../../../../domain/model/data';
 import {FormBuilder, Validators} from '@angular/forms';
 import * as uuid from 'uuid';
 import {RepositoryService} from '../../../../data/repository/repository.service';
@@ -24,6 +24,7 @@ export class AddMenuElementBottomSheetComponent extends SubscriberContextCompone
 
   courseNumber = this.fb.control(null, [Validators.required, Validators.min(1)]);
   notes = this.fb.control('');
+  user: SimpleUser | null = null;
 
   constructor(private bottomSheetRef: MatBottomSheetRef<AddMenuElementBottomSheetComponent>,
               private repo: RepositoryService,
@@ -39,6 +40,7 @@ export class AddMenuElementBottomSheetComponent extends SubscriberContextCompone
   }
 
   ngOnInit(): void {
+    this.subscribeWithContext(this.repo.getUser(), it => this.user = it);
     this.courseSelection = this.getCourseSelection();
   }
 
@@ -79,14 +81,16 @@ export class AddMenuElementBottomSheetComponent extends SubscriberContextCompone
     if (this.step === 'INSERTING') {
       this.step = 'CONFIRMING';
     } else if (this.step === 'CONFIRMING') {
-      this.subscribeWithContext(this.repo.addToCourse(this.getDish(), this.courseNumber.value), response => {
-        if (response) {
-          this.step = 'DONE';
-        } else {
-          this.snackbar.open('Qualcosa è andato storto durante l\'associazione, riprova!', 'chiudi');
-        }
-      });
-
+      const dish = this.getDish();
+      if (dish) {
+        this.subscribeWithContext(this.repo.addToCourse(dish, this.courseNumber.value), response => {
+          if (response) {
+            this.step = 'DONE';
+          } else {
+            this.snackbar.open('Qualcosa è andato storto durante l\'associazione, riprova!', 'chiudi');
+          }
+        });
+      }
     }
 
   }
@@ -108,14 +112,18 @@ export class AddMenuElementBottomSheetComponent extends SubscriberContextCompone
     return res;
   }
 
-  getDish(): Dish {
-    return {
-      menuElement: this.menuElement,
-      notes: this.notes.value,
-      uuid: uuid.v4(),
-      state: 'WAITING',
-      relatedClient: null
-    };
+  getDish(): Dish | null {
+    if (this.user) {
+      return {
+        menuElement: this.menuElement,
+        notes: this.notes.value,
+        uuid: uuid.v4(),
+        state: 'WAITING',
+        relatedClient: this.user
+      };
+    } else {
+      return null;
+    }
   }
 
   goToBill(): void {

@@ -52,7 +52,7 @@ data class Course(
 data class Dish(
     val uuid: String,
     val notes: String,
-    val relatedClient: SimpleUser?,
+    val relatedClient: SimpleUser,
     val menuElement: MenuElement,
     val state: DishState,
 )

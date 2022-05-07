@@ -2,6 +2,7 @@ package routes
 
 import instance
 import io.ktor.application.*
+import io.ktor.auth.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
@@ -14,6 +15,7 @@ import model.tables.TablesTable
 import model.tables.UsersTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
+import routes.auth.BasePrincipal
 import routes.auth.Role
 import routes.auth.authenticate
 
@@ -70,16 +72,17 @@ fun Route.waitersApi() = route("waiter") {
             transaction(db) {
                 BillEntity.findById(request.billId.toUUID())!!.let { bill ->
                     val course = bill.courses.firstOrNull { it.number == request.courseNumber } ?: CourseEntity.new {
-                        this.isSent = false
-                        this.setReadyClients(emptyList())
-                        this.number = request.courseNumber
-                        this.relatedBillID = bill.id
+                        isSent = false
+                        setReadyClients(emptyList())
+                        number = request.courseNumber
+                        relatedBillID = bill.id
                     }
                     DishEntity.new {
-                        this.menuElement = MenuElementEntity.findById(request.dish.menuElement.uuid.toUUID())!!
-                        this.notes = request.dish.notes
-                        this.state = DishState.WAITING.name
-                        this.relatedCourseID = course.id
+                        relatedClient = call.principal<BasePrincipal>()!!.userId.findUser()
+                        menuElement = MenuElementEntity.findById(request.dish.menuElement.uuid.toUUID())!!
+                        notes = request.dish.notes
+                        state = DishState.WAITING.name
+                        relatedCourseID = course.id
                     }
                 }
 
@@ -94,7 +97,7 @@ fun Route.waitersApi() = route("waiter") {
                 DishEntity.findById(toEditDish.toEditId.toUUID())!!.apply {
                     this.menuElement = MenuElementEntity.findById(newDish.menuElement.uuid.toUUID())!!
                     this.notes = newDish.notes
-                    this.relatedClient = UserEntity.find { UsersTable.username eq newDish.relatedClient?.username!! }.firstOrNull()
+                    this.relatedClient = UserEntity.find { UsersTable.username eq newDish.relatedClient.username }.first()
                     this.state = newDish.state.name
                 }.serialize()
             })

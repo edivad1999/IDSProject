@@ -26,11 +26,37 @@
           <mat-accordion>
             <mat-expansion-panel *ngFor="let course of bill.courses" (opened)="this.lastOpenNumber=course.number" [expanded]="this.lastOpenNumber === course.number">
               <mat-expansion-panel-header>
-                <div>Portata {{course.number}} </div>
+                <mat-panel-title>
+                  <mat-icon style="margin-right: 8px" color="{{course.isSent ? 'primary' : 'accent'}}">{{course.isSent ? "done" : "forward"}}</mat-icon>
+
+                  Portata {{course.number}} </mat-panel-title>
+                <mat-panel-description>
+                  Pronti {{course.readyClients.length}}/{{bill.users.length}}
+                </mat-panel-description>
               </mat-expansion-panel-header>
-              <div *ngFor="let dish of course.dishes">
-                {{dish.menuElement.name}}
+
+              <div class="border" *ngFor="let keyValue of getDishesGroupedByUsers(course.dishes) | keyvalue" style="margin: 12px">
+                <div style="display: flex; width: 100%; justify-content: center;padding-top: 12px;padding-bottom: 12px">
+                  <span>Piatti del cliente {{keyValue.key}}</span>
+                </div>
+                <div *ngFor="let dish of keyValue.value" style="width: 100%;display: flex;flex-direction: column">
+                  <div>
+                    <mat-divider inset="12px"></mat-divider>
+                  </div>
+                  <div style="width: 90%;display: flex;justify-content: space-between; align-self:center;align-items: center ;padding-left:12px;padding-right: 12px">
+                    <div>
+                      {{dish.menuElement.name}}
+                    </div>
+                    <div>
+                      {{dish.menuElement.price.toFixed(2)}}€
+                      <button mat-icon-button color="warn" [disabled]="course.isSent" *ngIf="checkDishOwner(dish)">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
+
             </mat-expansion-panel>
           </mat-accordion>
 

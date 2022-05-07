@@ -53,7 +53,7 @@ export interface Course {
 export interface Dish {
   uuid: string;
   notes: string;
-  relatedClient: SimpleUser | null;
+  relatedClient: SimpleUser;
   menuElement: MenuElement;
   state: DishState;
 }

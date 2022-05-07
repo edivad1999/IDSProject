@@ -1,13 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {RepositoryService} from '../../../data/repository/repository.service';
 import {SubscriberContextComponent} from '../../../utils/subscriber-context.component';
-import {Bill, Dish, SimpleUser} from '../../../domain/model/data';
+import {Bill, Dish, Role, SimpleUser} from '../../../domain/model/data';
 
 export interface DishesGrouped {
   [username: string]: Dish[];
-
-  waiterDishes: Dish[];
-
 }
 
 @Component({
@@ -33,7 +30,8 @@ export class ManageBillComponent extends SubscriberContextComponent implements O
     this.subscribeWithContext(this.repo.getBill(), it => {
       this.updateBill(it);
       if (it) {
-        this.subscribeWithContext(this.repo.billFlow(it.id), bill => this.updateBill(bill));
+        //todo uncomment to restart ws
+        // this.subscribeWithContext(this.repo.billFlow(it.id), bill => this.updateBill(bill));
 
       }
 
@@ -52,23 +50,28 @@ export class ManageBillComponent extends SubscriberContextComponent implements O
   }
 
   getDishesGroupedByUsers(dishes: Dish[]): DishesGrouped {
-    const result: DishesGrouped = {waiterDishes: []};
-    dishes.forEach(dish => {
-      if (dish.relatedClient !== null) {
-        if (!result[dish.relatedClient.username]) {
-          result[dish.relatedClient.username] = [];
-        }
-        result[dish.relatedClient.username].push(dish);
+    const res: DishesGrouped = {};
+    dishes.forEach(it => {
+      const username: string = it.relatedClient.role >= Role.CLIENT ? 'Cameriere' : it.relatedClient.username;
+      if (res[username]) {
+        res[username].push(it);
       } else {
-        result.waiterDishes.push(dish);
+        res[username] = [it];
       }
     });
-    return result;
+    return res;
   }
 
-  getUsers(dishes: Dish[]) {
-    // tslint:disable-next-line:no-non-null-assertion
-    console.log(dishes.filter(it => it.relatedClient).map(it => it.relatedClient!.username));
-    return dishes.filter(it => it.relatedClient).map(it => it.relatedClient!.username);
+  checkDishOwner(dish: Dish): boolean {
+    if (this.user) {
+      if (this.user.role >= Role.CLIENT) {
+        return true;
+      } else {
+        return this.user.username === dish.relatedClient.username;
+      }
+    } else {
+      return false;
+    }
+
   }
 }

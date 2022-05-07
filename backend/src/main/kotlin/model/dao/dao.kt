@@ -119,7 +119,7 @@ class DishEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     companion object : UUIDEntityClass<DishEntity>(DishesTable)
 
     var notes by DishesTable.notes
-    var relatedClient by UserEntity optionalReferencedOn DishesTable.relatedClient
+    var relatedClient by UserEntity referencedOn DishesTable.relatedClient
     var menuElement by MenuElementEntity referencedOn DishesTable.menuElement
     var state by DishesTable.state
     var relatedCourseID by DishesTable.relatedCourse
@@ -128,7 +128,7 @@ class DishEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
 
 
     fun getState() = DishState.valueOf(state)
-    fun serialize() = Dish(uuid = id.value.toString(), notes = notes, relatedClient = relatedClient?.simpleSerialize(), menuElement = menuElement.serialize(), state = getState())
+    fun serialize() = Dish(uuid = id.value.toString(), notes = notes, relatedClient = relatedClient.simpleSerialize(), menuElement = menuElement.serialize(), state = getState())
 
 }
 

@@ -78,7 +78,7 @@ fun Route.clientsApi() = route("clients") {
                 DishEntity.findById(toEditDish.toEditId.toUUID())!!.apply {
                     this.menuElement = MenuElementEntity.findById(newDish.menuElement.uuid.toUUID())!!
                     this.notes = newDish.notes
-                    this.relatedClient = UserEntity.find { UsersTable.username eq newDish.relatedClient?.username!! }.firstOrNull()
+                    this.relatedClient = UserEntity.find { UsersTable.username eq newDish.relatedClient.username }.first()
                     this.state = newDish.state.name
                 }.serialize()
             })
