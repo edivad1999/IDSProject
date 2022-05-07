@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {RepositoryService} from '../../../data/repository/repository.service';
 import {SubscriberContextComponent} from '../../../utils/subscriber-context.component';
-import {Bill, Dish, Role, SimpleUser} from '../../../domain/model/data';
+import {Bill, Course, Dish, Role, SimpleUser} from '../../../domain/model/data';
 
 export interface DishesGrouped {
   [username: string]: Dish[];
@@ -30,8 +30,8 @@ export class ManageBillComponent extends SubscriberContextComponent implements O
     this.subscribeWithContext(this.repo.getBill(), it => {
       this.updateBill(it);
       if (it) {
-        //todo uncomment to restart ws
-        // this.subscribeWithContext(this.repo.billFlow(it.id), bill => this.updateBill(bill));
+        // todo uncomment to restart ws
+        this.subscribeWithContext(this.repo.billFlow(it.id), bill => this.updateBill(bill));
 
       }
 
@@ -73,5 +73,39 @@ export class ManageBillComponent extends SubscriberContextComponent implements O
       return false;
     }
 
+  }
+
+  deleteDish(dish: Dish): void {
+
+  }
+
+  toggleImReady(course: Course, event: Event): void {
+    event.stopImmediatePropagation();
+    if (course.readyClients.filter(it => it.username === this.user?.username).length < 1) {
+      this.subscribeWithContext(
+        this.repo.setReady(course.id), action => {
+          if (action) {
+            // tslint:disable-next-line:no-non-null-assertion
+            course.readyClients.push(this.user!);
+          }
+        });
+    } else {
+      this.subscribeWithContext(
+        this.repo.setReady(course.id), action => {
+          if (action) {
+            // tslint:disable-next-line:no-non-null-assertion
+            course.readyClients = course.readyClients.filter(it => it.username !== this.user?.username);
+          }
+        });
+    }
+  }
+
+
+  amIReady(course: Course): boolean {
+    if (this.bill && this.user) {
+      return course.readyClients.filter(it => it.username === this.user?.username).length < 1;
+    } else {
+      return false;
+    }
   }
 }

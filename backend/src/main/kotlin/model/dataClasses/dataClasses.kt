@@ -23,7 +23,7 @@ data class SimpleUser(
 
 @Serializable
 data class Bill(
-    val id:String,
+    val id: String,
     val secretCode: String,
     val coveredNumbers: Int,
     val openedAt: Long,
@@ -41,6 +41,7 @@ data class Table(
 
 @Serializable
 data class Course(
+    val id: String,
     val isSent: Boolean,
     val number: Int,
     val sentAt: Long?,
@@ -63,5 +64,5 @@ data class MenuElement(
     val ingredients: String,
     val description: String,
     val price: Float,
-    val uuid: String = UUID.randomUUID().toString()
+    val uuid: String = UUID.randomUUID().toString(),
 )

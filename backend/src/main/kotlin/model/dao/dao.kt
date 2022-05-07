@@ -56,7 +56,7 @@ class BillEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
         closedAt = closedAt,
         relatedTable = this.relatedTable.serialize(),
         users = users.map { it.simpleSerialize() },
-        courses = courses.map { it.serialize() })
+        courses = courses.map { it.serialize() }.sortedBy { it.number })
 
     fun addUser(userId: UUID, code: String) = UserEntity.findById(userId)!!.let { user ->
         if (secretCode == code && users.toList().size < coveredNumbers) {
@@ -93,9 +93,15 @@ class CourseEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     private var readyClients by CoursesTable.readyClients //È privato perché ci si accede con le funzioni e non va mai toccato a mano
     val dishes by DishEntity referrersOn DishesTable.relatedCourse
 
-    private fun getReadyClients() = readyClients?.takeIf { it.isNotEmpty() }?.split(",")?.map { UserEntity.findById(it.toUUID())!! } ?: emptyList()
+    private fun getReadyClients() =
+        readyClients.split(",").mapNotNull {
+            if (it.isNotBlank()) {
+                UserEntity.findById(it.toUUID())!!
+            } else null
+        }
+
     fun setReadyClients(users: List<UserEntity>) {
-        readyClients = users.map { it.id.value }.joinToString { "," }
+        readyClients = users.map { it.id.value.toString() }.joinToString(",")
     }
 
     fun getAllRelatedClients(): List<UserEntity> {
@@ -104,15 +110,33 @@ class CourseEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
 
     }
 
+    fun getRelatedBillUsers() = BillEntity.findById(this.relatedBillID)!!.users.map { it.simpleSerialize() }
+
+
     fun setReadyOnlyOne(user: UserEntity) {
         val userAlreadyInside = getReadyClients().any { it.id == user.id }
         if (!userAlreadyInside) {
             setReadyClients(getReadyClients().toMutableList().apply { this.add(user) })
+            if (this.getReadyClients().size == this.getRelatedBillUsers().size) {
+                this.isSent = true
+                this.sentAt = System.currentTimeMillis()
+            }
+        } else {
+            if (this.getReadyClients().size < this.getRelatedBillUsers().size) {
+                setReadyClients(getReadyClients().toMutableList().apply { remove(user) })
+            }
         }
     }
 
 
-    fun serialize() = Course(number = number, isSent = isSent, sentAt = sentAt, readyClients = getReadyClients().map { it.simpleSerialize() }, dishes = dishes.map { it.serialize() })
+    fun serialize() = Course(
+        id = this.id.value.toString(),
+        number = number,
+        isSent = isSent,
+        sentAt = sentAt,
+        readyClients = getReadyClients().map { it.simpleSerialize() },
+        dishes = dishes.map { it.serialize() }
+    )
 }
 
 class DishEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {

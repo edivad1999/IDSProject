@@ -56,9 +56,7 @@ fun Route.clientsApi() = route("clients") {
                 val bill = BillEntity.find {
                     BillsTable.closedAt.isNull()
                 }.firstOrNull {
-                    it.relatedTable.number == req.tableNumber
-                            && it.relatedTable.isOccupied &&
-                            it.users.none { userEntity -> userEntity.id.value == id }
+                    it.relatedTable.number == req.tableNumber && it.relatedTable.isOccupied && it.users.none { userEntity -> userEntity.id.value == id }
                 }
                 bill?.let {
                     if (it.addUser(id, req.secretCode)) HttpStatusCode.OK else HttpStatusCode.BadRequest
@@ -117,11 +115,11 @@ fun Route.clientsApi() = route("clients") {
             call.respond(HttpStatusCode.OK)
         }
         get("setReady") {
-            val courseId = call.parameters.get("courseId")!!.toUUID()
-            val userId = call.principal<BasePrincipal>()!!.userId.toUUID()
-
+            val courseId = call.parameters["courseId"]!!.toUUID()
             transaction(db) {
-                CourseEntity.findById(courseId)!!.setReadyOnlyOne(UserEntity.findById(userId)!!)
+                val user = call.principal<BasePrincipal>()!!.userId.findUser()
+
+                CourseEntity.findById(courseId)!!.setReadyOnlyOne(user)
             }
             call.respond(HttpStatusCode.OK)
         }
@@ -141,7 +139,6 @@ fun Route.clientsApi() = route("clients") {
                     return@webSocket
                 }
                 send(json.encodeToString(bill))
-
 
             }
 

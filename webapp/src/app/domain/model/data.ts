@@ -43,6 +43,7 @@ export interface Table {
 }
 
 export interface Course {
+  id: string;
   number: number;
   isSent: boolean;
   sentAt?: number;
