@@ -48,15 +48,7 @@ export class DatasourceService {
         it => {
           // Need that shit to catch enums
           const role = it.body as SimpleStringResponse;
-          if (role.responseString === 'MANAGER') {
-            return Role.MANAGER;
-          } else if (role.responseString === 'WAITER') {
-            return Role.WAITER;
-          } else if (role.responseString === 'KITCHEN') {
-            return Role.KITCHEN;
-          } else {
-            return Role.CLIENT;
-          }
+          return role.responseString as Role;
         })
     );
   }
@@ -263,7 +255,9 @@ export class DatasourceService {
 
   getUser(): Observable<SimpleUser> {
     return this.httpClient.get(this.endpoints.getUserUrl(), {observe: 'response'}).pipe(
-      map((response) => response.body as SimpleUser),
+      map((response) => {
+        return response.body as SimpleUser;
+      }),
     );
   }
 

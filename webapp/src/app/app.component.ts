@@ -2,7 +2,7 @@ import {Component, HostListener, OnInit, ViewChild} from '@angular/core';
 import {SubscriberContextComponent} from './utils/subscriber-context.component';
 import {MatDrawer, MatDrawerMode} from '@angular/material/sidenav';
 import {RepositoryService} from './data/repository/repository.service';
-import {Role} from './domain/model/data';
+import {getRoleValue, Role} from './domain/model/data';
 
 interface ListItem {
   name: string;
@@ -30,8 +30,8 @@ export class AppComponent extends SubscriberContextComponent implements OnInit {
   displayedItems: ListItem[] = [
     {name: 'Login', url: '/login', needsAuthorization: false},
     {name: 'Home', url: '/home', needsAuthorization: true},
-    {name: 'Imposta il menù', url: '/setMenu', needsAuthorization: true, role: Role.MANAGER},
-    {name: 'Imposta i tavoli', url: '/setTables', needsAuthorization: true, role: Role.MANAGER},
+    {name: 'Imposta il menù', url: '/setMenu', needsAuthorization: true, role: 'MANAGER'},
+    {name: 'Imposta i tavoli', url: '/setTables', needsAuthorization: true, role: 'MANAGER'},
     {name: 'Logout', url: '/logout', needsAuthorization: true},
 
 
@@ -83,8 +83,7 @@ export class AppComponent extends SubscriberContextComponent implements OnInit {
         return false;
 
       } else {
-
-        return userRole.valueOf() >= routeRole.valueOf();
+        return getRoleValue(userRole) >= getRoleValue(routeRole);
       }
     }
   }

@@ -48,6 +48,9 @@ import { BillAssociationDialogComponent } from './components/Client/client-home/
 import { MenuComponent } from './components/Common/menu/menu.component';
 import { AddMenuElementBottomSheetComponent } from './components/Common/menu/add-menu-element-bottom-sheet/add-menu-element-bottom-sheet.component';
 import {MatBottomSheet, MatBottomSheetModule} from '@angular/material/bottom-sheet';
+import { TableOccupationComponent } from './components/Waiter/waiter-home/table-occupation/table-occupation.component';
+import { OpenBillComponent } from './components/Waiter/waiter-home/table-occupation/open-bill/open-bill.component';
+import { CloseBillComponent } from './components/Waiter/waiter-home/table-occupation/close-bill/close-bill.component';
 
 @NgModule({
   declarations: [
@@ -66,6 +69,9 @@ import {MatBottomSheet, MatBottomSheetModule} from '@angular/material/bottom-she
     BillAssociationDialogComponent,
     MenuComponent,
     AddMenuElementBottomSheetComponent,
+    TableOccupationComponent,
+    OpenBillComponent,
+    CloseBillComponent,
 
   ],
   imports: [

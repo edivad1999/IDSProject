@@ -118,8 +118,11 @@ fun Route.clientsApi() = route("clients") {
             val courseId = call.parameters["courseId"]!!.toUUID()
             transaction(db) {
                 val user = call.principal<BasePrincipal>()!!.userId.findUser()
+                if (user.getRole() > Role.CLIENT) throw Error("Wrong Role")
+                else {
+                    CourseEntity.findById(courseId)!!.setReadyOnlyOne(user)
+                }
 
-                CourseEntity.findById(courseId)!!.setReadyOnlyOne(user)
             }
             call.respond(HttpStatusCode.OK)
         }

@@ -46,8 +46,9 @@ fun Route.waitersApi() = route("waiter") {
             val coveredNumber = call.parameters["coveredNumber"]!!.toInt()
             call.respond(transaction(db) {
                 val table = TableEntity.find { TablesTable.number eq tableNumber }.firstOrNull()!!
-                val isAlreadyOccupied = BillEntity.find { BillsTable.relatedTable eq table.id }.all { it.closedAt != null } && !table.isOccupied
+                val isAlreadyOccupied = BillEntity.find { BillsTable.relatedTable eq table.id }.any { it.closedAt == null } && !table.isOccupied
                 if (!isAlreadyOccupied) {
+                    table.isOccupied = true
                     val code = BillEntity.new {
                         this.openedAt = System.currentTimeMillis()
                         this.relatedTable = table
@@ -116,6 +117,7 @@ fun Route.waitersApi() = route("waiter") {
             transaction(db) {
                 CourseEntity.findById(courseId)!!.apply {
                     this.setReadyClients(this.getAllRelatedClients())
+                    this.isSent = true
                 }
 
             }

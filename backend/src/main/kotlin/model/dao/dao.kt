@@ -79,7 +79,7 @@ class TableEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {
     var isOccupied by TablesTable.isOccupied
 
     //    val billHistory by BillEntity referrersOn BillsTable.relatedTable crea un ciclo
-    fun serialize() = Table(number = number, isOccupied = isOccupied)
+    fun serialize() = Table(number = number, isOccupied = isOccupied, id = id.value.toString())
 }
 
 class CourseEntity(uuid: EntityID<UUID>) : UUIDEntity(uuid) {

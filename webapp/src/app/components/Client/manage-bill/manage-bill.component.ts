@@ -1,7 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {RepositoryService} from '../../../data/repository/repository.service';
 import {SubscriberContextComponent} from '../../../utils/subscriber-context.component';
-import {Bill, Course, Dish, Role, SimpleUser} from '../../../domain/model/data';
+import {Bill, compareRole, Course, Dish, SimpleUser} from '../../../domain/model/data';
+import {filter, map, mergeMap} from 'rxjs/operators';
+import {ActivatedRoute} from '@angular/router';
 
 export interface DishesGrouped {
   [username: string]: Dish[];
@@ -17,29 +19,53 @@ export class ManageBillComponent extends SubscriberContextComponent implements O
   bill: Bill | null = null;
   user: SimpleUser | null = null;
 
-  lastOpenNumber = 0;
+  lastOpenNumber: number | null = null;
+
+  setLastOpen(n: number): void {
+
+    this.lastOpenNumber = n;
+  }
 
   constructor(
+    private route: ActivatedRoute,
     private repo: RepositoryService
   ) {
     super();
   }
 
   ngOnInit(): void {
-    this.subscribeWithContext(this.repo.getUser(), it => this.user = it);
-    this.subscribeWithContext(this.repo.getBill(), it => {
-      this.updateBill(it);
-      if (it) {
-        // todo uncomment to restart ws
-        this.subscribeWithContext(this.repo.billFlow(it.id), bill => this.updateBill(bill));
-
+    this.subscribeWithContext(this.repo.getUser(), user => {
+      this.user = user;
+      if (user.role === 'CLIENT') {
+        this.subscribeWithContext(this.repo.getBill(), it => {
+          this.updateBill(it);
+          if (it) {
+            // todo uncomment to restart ws
+            this.subscribeWithContext(this.repo.billFlow(it.id), bill => this.updateBill(bill));
+          }
+        });
+      } else {
+        this.subscribeWithContext(
+          this.route.paramMap.pipe(
+            map(m => m.get('idBill')),
+            filter(bill => !!bill),
+            map(bill => bill as string),
+            mergeMap(bill => this.repo.waiterGetBill(bill))
+          ),
+          bill => {
+            this.updateBill(bill);
+            if (bill) {
+              // todo uncomment to restart ws
+              this.subscribeWithContext(this.repo.billFlow(bill.id), b => this.updateBill(b));
+            }
+          });
       }
-
     });
+
   }
 
-  updateBill(bill: Bill | null): void {
 
+  updateBill(bill: Bill | null): void {
     this.bill = bill;
 
   }
@@ -52,7 +78,7 @@ export class ManageBillComponent extends SubscriberContextComponent implements O
   getDishesGroupedByUsers(dishes: Dish[]): DishesGrouped {
     const res: DishesGrouped = {};
     dishes.forEach(it => {
-      const username: string = it.relatedClient.role >= Role.CLIENT ? 'Cameriere' : it.relatedClient.username;
+      const username: string = it.relatedClient.role !== 'CLIENT' ? 'Cameriere' : it.relatedClient.username;
       if (res[username]) {
         res[username].push(it);
       } else {
@@ -64,7 +90,7 @@ export class ManageBillComponent extends SubscriberContextComponent implements O
 
   checkDishOwner(dish: Dish): boolean {
     if (this.user) {
-      if (this.user.role >= Role.CLIENT) {
+      if (compareRole(this.user.role, 'CLIENT') >= 0) {
         return true;
       } else {
         return this.user.username === dish.relatedClient.username;
@@ -107,5 +133,30 @@ export class ManageBillComponent extends SubscriberContextComponent implements O
     } else {
       return false;
     }
+  }
+
+  getMenuUrl(): string | null {
+    if (this.user) {
+      if (this.user.role === 'CLIENT') {
+        return '/menu';
+      } else {
+        return this.bill ? `/${this.bill.id}/waiterMenu` : null;
+      }
+    } else {
+      return null;
+    }
+
+  }
+
+  forceToggleCourse(course: Course, event: Event): void {
+    event.stopImmediatePropagation();
+    this.subscribeWithContext(
+      this.repo.forceSetReady(course.id), action => {
+        if (action) {
+          course.isSent = true;
+        }
+      }
+    );
+
   }
 }

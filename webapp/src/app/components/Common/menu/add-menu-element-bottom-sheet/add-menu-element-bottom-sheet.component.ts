@@ -83,13 +83,15 @@ export class AddMenuElementBottomSheetComponent extends SubscriberContextCompone
     } else if (this.step === 'CONFIRMING') {
       const dish = this.getDish();
       if (dish) {
-        this.subscribeWithContext(this.repo.addToCourse(dish, this.courseNumber.value), response => {
-          if (response) {
-            this.step = 'DONE';
-          } else {
-            this.snackbar.open('Qualcosa è andato storto durante l\'associazione, riprova!', 'chiudi');
-          }
-        });
+        this.subscribeWithContext(this.user?.role === 'MANAGER' ?
+            this.repo.addToCourse(dish, this.courseNumber.value) : this.repo.waiterAddToCourse(dish, this.courseNumber.value, this.bill.id),
+          response => {
+            if (response) {
+              this.step = 'DONE';
+            } else {
+              this.snackbar.open('Qualcosa è andato storto durante l\'associazione, riprova!', 'chiudi');
+            }
+          });
       }
     }
 
@@ -114,13 +116,15 @@ export class AddMenuElementBottomSheetComponent extends SubscriberContextCompone
 
   getDish(): Dish | null {
     if (this.user) {
-      return {
+      const res: Dish = {
         menuElement: this.menuElement,
         notes: this.notes.value,
         uuid: uuid.v4(),
         state: 'WAITING',
         relatedClient: this.user
       };
+      res.relatedClient.role = this.user.role;
+      return res;
     } else {
       return null;
     }
@@ -128,8 +132,12 @@ export class AddMenuElementBottomSheetComponent extends SubscriberContextCompone
 
   goToBill(): void {
     this.bottomSheetRef.dismiss();
+    if (this.user?.role === 'CLIENT') {
+      this.router.navigate(['/bill']);
+    } else {
+      this.router.navigate([`/bill/${this.bill.id}`]);
 
-    this.router.navigate(['/bill']);
+    }
   }
 
   goToMenu(): void {

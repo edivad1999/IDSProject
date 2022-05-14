@@ -35,6 +35,7 @@ data class Bill(
 
 @Serializable
 data class Table(
+    val id:String,
     val number: Int,
     val isOccupied: Boolean,
 )

@@ -4,10 +4,38 @@ export interface ErrorMessageResponse {
 
 export type AuthState = 'AUTHENTICATING' | 'AUTHENTICATED' | 'UNAUTHENTICATED';
 
-export enum Role {
-  CLIENT, KITCHEN, WAITER, MANAGER
+export type Role = 'CLIENT' | 'KITCHEN' | 'WAITER' | 'MANAGER';
 
+
+export function getRoleValue(role: Role): number {
+  if (role === 'CLIENT') {
+    return 0;
+  } else if (role === 'MANAGER') {
+    return 3;
+  } else if (role === 'KITCHEN') {
+    return 1;
+  } else {
+    return 2;
+  }
 }
+
+
+export function compareRole(role1: Role, role2: Role): number {
+  return getRoleValue(role1) > getRoleValue(role2) ? 1 : getRoleValue(role1) === getRoleValue(role2) ? 0 : -1;
+}
+
+export function roleIsBigger(role1: Role, role2: Role): boolean {
+  return getRoleValue(role1) > getRoleValue(role2);
+}
+
+export function roleIsSmaller(role1: Role, role2: Role): boolean {
+  return getRoleValue(role1) < getRoleValue(role2);
+}
+
+export function roleEquals(role1: Role, role2: Role): boolean {
+  return getRoleValue(role1) === getRoleValue(role2);
+}
+
 
 export type DishState = 'WAITING' | 'PREPARING' | 'DELIVERED' | 'PROBLEM';
 
@@ -38,6 +66,7 @@ export interface Bill {
 }
 
 export interface Table {
+  id: string;
   number: number;
   isOccupied: boolean;
 }

@@ -1,0 +1,28 @@
+<mat-card style="display:flex; flex-direction:column; height: 100%; width: 100%; justify-content: space-between">
+  <div *ngIf="this.bill!==null">
+    <mat-card-title>Tavolo: {{table.number}}</mat-card-title>
+    <mat-card-subtitle> Clienti: {{bill.users.length}} | Coperti:{{bill.coveredNumbers}}</mat-card-subtitle>
+    <mat-divider></mat-divider>
+    <mat-card-subtitle style="margin-top: 24px">
+      <div>
+        Portate totali: {{bill.courses.length}}
+      </div>
+    </mat-card-subtitle>
+  </div>
+  <div *ngIf="this.bill===null">
+    <mat-card-title>Tavolo: {{table.number}}</mat-card-title>
+
+  </div>
+  <mat-card-actions align="end">
+    <button *ngIf="!table.isOccupied" mat-raised-button color="primary" (click)="openBill()">
+      Apri il conto
+    </button>
+
+    <button *ngIf="bill?.relatedTable" mat-raised-button color="accent" [routerLink]="getUrl()">
+      Chiudi il conto
+    </button>
+    <button mat-raised-button color="primary" [routerLink]="getUrl()" *ngIf="bill?.relatedTable">
+      Vai al conto
+    </button>
+  </mat-card-actions>
+</mat-card>

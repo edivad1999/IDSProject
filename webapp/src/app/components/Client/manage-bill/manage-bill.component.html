@@ -1,18 +1,20 @@
 <div *ngIf="!bill">
   <mat-progress-bar mode="query"></mat-progress-bar>
 </div>
-<div *ngIf="bill">
+<div *ngIf="bill && user">
   <lib-central-column>
-    <mat-card style="padding: 0px">
-      <button style="width: 100%" mat-raised-button color="accent" [routerLink]="'/menu'">
+    <mat-card style="padding: 0">
+      <button style="width: 100%" mat-raised-button color="accent" [routerLink]="getMenuUrl()">
         <mat-icon>restaurant_menu</mat-icon>
         Vai al menù
       </button>
       <div style="padding: 16px">
         <mat-card-title>
-          <div style="display: flex; align-content: baseline">
+          <div style="display: flex; align-content: center; align-items: center">
             <mat-icon>table_restaurant</mat-icon>
             Tavolo {{bill.relatedTable.number}}
+            <span *ngIf="user.role !== 'CLIENT'" style="margin-left:8px;display:flex;align-content: center; align-items: center;align-self: center">  <mat-icon>pin</mat-icon>
+              {{bill.secretCode}}</span>
           </div>
 
         </mat-card-title>
@@ -24,7 +26,7 @@
         <mat-card-content style="margin-top: 24px">
 
           <mat-accordion>
-            <mat-expansion-panel *ngFor="let course of bill.courses" (opened)="this.lastOpenNumber=course.number" [expanded]="this.lastOpenNumber === course.number">
+            <mat-expansion-panel *ngFor="let course of bill.courses" (opened)="setLastOpen(course.number)" [expanded]="this.lastOpenNumber === course.number">
               <mat-expansion-panel-header style="display: flex">
                 <mat-panel-title style="width: max-content">
                   <mat-icon style="margin-right: 8px" color="{{course.isSent ? 'primary' : 'accent'}}">{{course.isSent ? "done" : "forward"}}</mat-icon>
@@ -40,6 +42,7 @@
                     </div>
                   </div>
                   <div>
+                    <span *ngIf="user.role ==='CLIENT'">
                     <button mat-flat-button color="accent" [disabled]="course.isSent" (click)="toggleImReady(course,$event)">
                       <span *ngIf="!course.isSent">
                         {{amIReady(course) ? "Pronto" : "Non pronto"}}
@@ -48,9 +51,15 @@
                         Inviata
                       </span>
                     </button>
+                    </span>
+                    <span *ngIf="user.role !=='CLIENT'">
+                       <button mat-flat-button color="accent" [disabled]="course.isSent" (click)="forceToggleCourse(course,$event)">
+                      <span *ngIf="!course.isSent">Pronto per tutti</span>
+                      <span *ngIf="course.isSent">Inviata</span>
+                       </button>
+                    </span>
                   </div>
                 </mat-panel-description>
-
               </mat-expansion-panel-header>
 
               <div class="border" *ngFor="let keyValue of getDishesGroupedByUsers(course.dishes) | keyvalue" style="margin: 12px">

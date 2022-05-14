@@ -32,7 +32,7 @@ export class HomeComponent extends SubscriberContextComponent implements OnInit 
 
   isManager(role: Role): boolean | null {
     if (this.myRole !== null) {
-      return role.valueOf() === Role.MANAGER.valueOf();
+      return role === 'MANAGER';
     } else {
       return null;
     }
@@ -40,7 +40,7 @@ export class HomeComponent extends SubscriberContextComponent implements OnInit 
 
   isClient(role: Role): boolean | null {
     if (this.myRole !== null) {
-      return role.valueOf() === Role.CLIENT.valueOf();
+      return role === 'CLIENT';
     } else {
       return null;
     }
@@ -48,7 +48,7 @@ export class HomeComponent extends SubscriberContextComponent implements OnInit 
 
   isWaiter(role: Role): boolean | null {
     if (this.myRole !== null) {
-      return role.valueOf() === Role.WAITER.valueOf();
+      return role === 'WAITER';
     } else {
       return null;
     }
@@ -56,7 +56,7 @@ export class HomeComponent extends SubscriberContextComponent implements OnInit 
 
   isKitchen(role: Role): boolean | null {
     if (this.myRole !== null) {
-      return role.valueOf() === Role.KITCHEN.valueOf();
+      return role === 'KITCHEN';
     } else {
       return null;
     }

@@ -4,7 +4,7 @@ import {map} from 'rxjs/operators';
 import {Injectable} from '@angular/core';
 import {RepositoryService} from '../data/repository/repository.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {Role} from '../domain/model/data';
+import {Role, roleEquals, roleIsBigger} from '../domain/model/data';
 
 
 @Injectable({
@@ -73,7 +73,7 @@ export class AuthorizeRole implements CanActivate {
         return false;
 
       } else {
-        return userRole.valueOf() >= routeRole.valueOf();
+        return roleIsBigger(userRole, routeRole);
       }
     }
   }
@@ -109,7 +109,7 @@ export class AuthorizeExactlyRole implements CanActivate {
         return false;
 
       } else {
-        return userRole.valueOf() === routeRole.valueOf();
+        return roleEquals(userRole, routeRole);
       }
     }
   }

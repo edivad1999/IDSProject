@@ -30,7 +30,7 @@ export class MenuComponent extends SubscriberContextComponent implements OnInit 
   refresh(): void {
     this.subscribeWithContext(this.repo.role.asObservable(), role => {
       this.role = role;
-      if (this.role === Role.CLIENT) {
+      if (this.role === 'CLIENT') {
         this.subscribeWithContext(this.repo.getBill(), bill => this.bill = bill);
       } else {
         // Getting id by parameters
