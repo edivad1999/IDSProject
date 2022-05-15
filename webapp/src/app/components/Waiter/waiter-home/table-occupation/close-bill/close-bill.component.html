@@ -1,1 +1,24 @@
-<p>close-bill works!</p>
+<mat-toolbar color="accent">Chiudi il conto del tavolo {{data.relatedTable.number}}</mat-toolbar>
+<div style="padding: 32px">
+  <div style="display: flex; align-items: center">
+    <div>
+      <mat-icon color="{{errorCourses?'warn' :'primary'}}">{{errorCourses ? 'warning' : 'done'}}</mat-icon>
+    </div>
+    <div>{{getCoursesString()}}</div>
+  </div>
+  <div style="display: flex; align-items: center">
+    <div>
+      <mat-icon color="{{errorDishes?'warn' :'primary'}}">{{errorDishes ? 'warning' : 'done'}}</mat-icon>
+    </div>
+    <div>{{getDishesString()}}</div>
+  </div>
+  <h2>
+    Vuoi proseguire comunque?
+  </h2>
+  <div style="display: flex; justify-content: end">
+    <button mat-raised-button color="accent" (click)="this.dialogRef.close()" style="margin-right: 12px"> No voglio uscire</button>
+    <button mat-raised-button color="primary" (click)="this.closeBill()"> Voglio chiudere il conto</button>
+
+  </div>
+</div>
+

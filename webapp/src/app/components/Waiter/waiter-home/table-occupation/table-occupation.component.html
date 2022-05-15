@@ -18,7 +18,7 @@
       Apri il conto
     </button>
 
-    <button *ngIf="bill?.relatedTable" mat-raised-button color="accent" [routerLink]="getUrl()">
+    <button *ngIf="bill?.relatedTable" mat-raised-button color="accent" (click)="closeBill()">
       Chiudi il conto
     </button>
     <button mat-raised-button color="primary" [routerLink]="getUrl()" *ngIf="bill?.relatedTable">

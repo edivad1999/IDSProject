@@ -1,3 +1,5 @@
+import {DishesGrouped} from '../../components/Client/manage-bill/manage-bill.component';
+
 export interface ErrorMessageResponse {
   error: string;
 }
@@ -39,6 +41,19 @@ export function roleEquals(role1: Role, role2: Role): boolean {
 
 export type DishState = 'WAITING' | 'PREPARING' | 'DELIVERED' | 'PROBLEM';
 
+export function translateState(state: DishState): string {
+  if (state === 'PREPARING') {
+    return 'In preparazione';
+  } else if (state === 'WAITING') {
+    return 'In attesa';
+  } else if (state === 'PROBLEM') {
+    return 'Problema';
+  } else {
+    return 'Consegnato';
+  }
+
+}
+
 
 export interface User {
   username: string;
@@ -78,6 +93,15 @@ export interface Course {
   sentAt?: number;
   readyClients: SimpleUser[];
   dishes: Dish[];
+}
+
+export interface CourseGrouped {
+  id: string;
+  number: number;
+  isSent: boolean;
+  sentAt?: number;
+  readyClients: SimpleUser[];
+  dishes: DishesGrouped;
 }
 
 export interface Dish {

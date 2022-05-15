@@ -24,24 +24,22 @@
         <mat-divider>
         </mat-divider>
         <mat-card-content style="margin-top: 24px">
+          <mat-expansion-panel style="margin-top: 12px" *ngFor="let course of courseGrouped" (click)="expandState(course.number)" [expanded]="isExpanded(course.number)">
+            <mat-expansion-panel-header style="display: flex">
+              <mat-panel-title style="width: max-content">
+                <mat-icon style="margin-right: 8px" color="{{course.isSent ? 'primary' : 'accent'}}">{{course.isSent ? "done" : "forward"}}</mat-icon>
+                Portata {{course.number === 0 ? 'veloce' : course.number }} </mat-panel-title>
 
-          <mat-accordion>
-            <mat-expansion-panel *ngFor="let course of bill.courses" (opened)="setLastOpen(course.number)" [expanded]="this.lastOpenNumber === course.number">
-              <mat-expansion-panel-header style="display: flex">
-                <mat-panel-title style="width: max-content">
-                  <mat-icon style="margin-right: 8px" color="{{course.isSent ? 'primary' : 'accent'}}">{{course.isSent ? "done" : "forward"}}</mat-icon>
-                  Portata {{course.number}} </mat-panel-title>
-
-                <mat-panel-description style="display: flex; justify-content: space-around">
-                  <div style="width: 100px">
-                    <div *ngIf="!course.isSent">
-                      Pronti {{course.readyClients.length}}/{{bill.users.length}}
-                    </div>
-                    <div *ngIf="course.isSent">
-                      Inviata
-                    </div>
+              <mat-panel-description style="display: flex; justify-content: space-around" *ngIf="course.number !== 0 ">
+                <div style="width: 100px">
+                  <div *ngIf="!course.isSent">
+                    Pronti {{course.readyClients.length}}/{{bill.users.length}}
                   </div>
-                  <div>
+                  <div *ngIf="course.isSent">
+                    Inviata
+                  </div>
+                </div>
+                <div>
                     <span *ngIf="user.role ==='CLIENT'">
                     <button mat-flat-button color="accent" [disabled]="course.isSent" (click)="toggleImReady(course,$event)">
                       <span *ngIf="!course.isSent">
@@ -52,42 +50,50 @@
                       </span>
                     </button>
                     </span>
-                    <span *ngIf="user.role !=='CLIENT'">
+                  <span *ngIf="user.role !=='CLIENT'">
                        <button mat-flat-button color="accent" [disabled]="course.isSent" (click)="forceToggleCourse(course,$event)">
                       <span *ngIf="!course.isSent">Pronto per tutti</span>
                       <span *ngIf="course.isSent">Inviata</span>
                        </button>
                     </span>
-                  </div>
-                </mat-panel-description>
-              </mat-expansion-panel-header>
-
-              <div class="border" *ngFor="let keyValue of getDishesGroupedByUsers(course.dishes) | keyvalue" style="margin: 12px">
-                <div style="display: flex; width: 100%; justify-content: flex-start;align-items: center;padding-top: 12px;padding-bottom: 12px;padding-left: 12px">
-                  <div style="display: flex;align-items: center">
-                    <mat-icon style="margin-right: 12px">person</mat-icon>
-                    {{keyValue.key}}</div>
                 </div>
-                <div *ngFor="let dish of keyValue.value" style="width: 100%;display: flex;flex-direction: column">
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <div class="border" *ngFor="let keyValue of course.dishes | keyvalue" style="margin: 12px">
+              <div style="display: flex; width: 100%; justify-content: flex-start;align-items: center;padding-top: 12px;padding-bottom: 12px;padding-left: 12px">
+                <div style="display: flex;align-items: center">
+                  <mat-icon style="margin-right: 12px">person</mat-icon>
+                  {{keyValue.key}}</div>
+              </div>
+              <div *ngFor="let dish of keyValue.value" style="width: 100%;display: flex;flex-direction: column">
+                <div>
+                  <mat-divider inset="12px"></mat-divider>
+                </div>
+                <div style="width: 90%;display: flex;justify-content: space-between; align-self:center;align-items: center ;padding-left:12px;padding-right: 12px">
                   <div>
-                    <mat-divider inset="12px"></mat-divider>
+                    {{dish.menuElement.name}}
                   </div>
-                  <div style="width: 90%;display: flex;justify-content: space-between; align-self:center;align-items: center ;padding-left:12px;padding-right: 12px">
-                    <div>
-                      {{dish.menuElement.name}}
-                    </div>
-                    <div>
-                      {{dish.menuElement.price.toFixed(2)}}€
-                      <button mat-icon-button color="warn" [disabled]="course.isSent" *ngIf="checkDishOwner(dish)" (click)="deleteDish(dish)">
-                        <mat-icon>delete</mat-icon>
-                      </button>
-                    </div>
+                  <div>
+                    <mat-card-subtitle style="padding: 0;margin: 0">
+                      {{translateState(dish.state)}}
+
+                    </mat-card-subtitle>
+                  </div>
+                  <div>
+                    <span>
+                    {{dish.menuElement.price.toFixed(2)}}€
+                    </span>
+                    <span *ngIf="checkDishOwner(dish)">
+                      <button mat-icon-button color="warn" [disabled]="course.isSent || !dishRemovable(dish)" (click)="deleteDish(dish.uuid,$event)">
+                      <mat-icon>delete</mat-icon></button>
+                    </span>
                   </div>
                 </div>
               </div>
+            </div>
 
-            </mat-expansion-panel>
-          </mat-accordion>
+          </mat-expansion-panel>
 
 
         </mat-card-content>

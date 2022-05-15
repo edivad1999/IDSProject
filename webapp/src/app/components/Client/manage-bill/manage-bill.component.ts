@@ -1,32 +1,33 @@
 import {Component, OnInit} from '@angular/core';
 import {RepositoryService} from '../../../data/repository/repository.service';
 import {SubscriberContextComponent} from '../../../utils/subscriber-context.component';
-import {Bill, compareRole, Course, Dish, SimpleUser} from '../../../domain/model/data';
+import {Bill, CourseGrouped, Dish, DishState, SimpleUser, translateState} from '../../../domain/model/data';
 import {filter, map, mergeMap} from 'rxjs/operators';
 import {ActivatedRoute} from '@angular/router';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 export interface DishesGrouped {
   [username: string]: Dish[];
 }
 
+
 @Component({
   selector: 'app-manage-bill',
   templateUrl: './manage-bill.component.html',
-  styleUrls: ['./manage-bill.component.css']
+  styleUrls: ['./manage-bill.component.css'],
+
 })
 export class ManageBillComponent extends SubscriberContextComponent implements OnInit {
 
   bill: Bill | null = null;
   user: SimpleUser | null = null;
 
-  lastOpenNumber: number | null = null;
+  expandedCourses: number[] = [];
+  courseGrouped: CourseGrouped[] = [];
 
-  setLastOpen(n: number): void {
-
-    this.lastOpenNumber = n;
-  }
 
   constructor(
+    private snackbar: MatSnackBar,
     private route: ActivatedRoute,
     private repo: RepositoryService
   ) {
@@ -67,7 +68,22 @@ export class ManageBillComponent extends SubscriberContextComponent implements O
 
   updateBill(bill: Bill | null): void {
     this.bill = bill;
-
+    if (this.bill) {
+      this.courseGrouped = this.bill.courses.map(it => {
+          const res: CourseGrouped = {
+            id: it.id,
+            dishes: this.getDishesGroupedByUsers(it.dishes),
+            number: it.number,
+            isSent: it.isSent,
+            sentAt: it.sentAt,
+            readyClients: it.readyClients
+          };
+          return res;
+        }
+      );
+    } else {
+      this.courseGrouped = [];
+    }
   }
 
   getDateStringFromInstant(instant: number): string {
@@ -85,12 +101,13 @@ export class ManageBillComponent extends SubscriberContextComponent implements O
         res[username] = [it];
       }
     });
+    console.log(res);
     return res;
   }
 
   checkDishOwner(dish: Dish): boolean {
     if (this.user) {
-      if (compareRole(this.user.role, 'CLIENT') >= 0) {
+      if (this.user.role !== 'CLIENT') {
         return true;
       } else {
         return this.user.username === dish.relatedClient.username;
@@ -101,11 +118,23 @@ export class ManageBillComponent extends SubscriberContextComponent implements O
 
   }
 
-  deleteDish(dish: Dish): void {
+  deleteDish(dish: string, event: Event): void {
+    event.stopImmediatePropagation();
+    console.log(dish);
+    this.subscribeWithContext(
+      this.repo.removeDish(
+        dish
+      ), action => {
+        if (!action) {
+          this.snackbar.open('Errore nella eliminazione');
+        }
+      }
+    );
+
 
   }
 
-  toggleImReady(course: Course, event: Event): void {
+  toggleImReady(course: CourseGrouped, event: Event): void {
     event.stopImmediatePropagation();
     if (course.readyClients.filter(it => it.username === this.user?.username).length < 1) {
       this.subscribeWithContext(
@@ -127,7 +156,7 @@ export class ManageBillComponent extends SubscriberContextComponent implements O
   }
 
 
-  amIReady(course: Course): boolean {
+  amIReady(course: CourseGrouped): boolean {
     if (this.bill && this.user) {
       return course.readyClients.filter(it => it.username === this.user?.username).length < 1;
     } else {
@@ -148,7 +177,11 @@ export class ManageBillComponent extends SubscriberContextComponent implements O
 
   }
 
-  forceToggleCourse(course: Course, event: Event): void {
+  translateState(dishState: DishState): string {
+    return translateState(dishState);
+  }
+
+  forceToggleCourse(course: CourseGrouped, event: Event): void {
     event.stopImmediatePropagation();
     this.subscribeWithContext(
       this.repo.forceSetReady(course.id), action => {
@@ -158,5 +191,26 @@ export class ManageBillComponent extends SubscriberContextComponent implements O
       }
     );
 
+  }
+
+  expandState(n: number): void {
+    const index = this.expandedCourses.indexOf(n);
+    if (index !== -1) {
+      this.expandedCourses.splice(index);
+    } else {
+      this.expandedCourses.push(n);
+    }
+  }
+
+  isExpanded(n: number): boolean {
+    return this.expandedCourses.filter(it => it === n).length > 0;
+  }
+
+  dishRemovable(dish: Dish): boolean {
+    if (this.user?.role !== 'CLIENT') {
+      return true;
+    }
+
+    return dish.state !== 'DELIVERED';
   }
 }

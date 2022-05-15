@@ -21,6 +21,10 @@ export class WaiterHomeComponent extends SubscriberContextComponent implements O
   }
 
   ngOnInit(): void {
+    this.update();
+  }
+
+  update(): void {
     this.subscribeWithContext(
       this.repo.billList(), action => {
         this.bills = action;

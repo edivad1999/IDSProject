@@ -22,7 +22,11 @@ export class AddMenuElementBottomSheetComponent extends SubscriberContextCompone
   step: AddingStep = 'INSERTING';
   courseSelection: CourseSelection[] = [];
 
-  courseNumber = this.fb.control(null, [Validators.required, Validators.min(1)]);
+  courseNumber = this.fb.control(null, [Validators.required, Validators.min(0)]);
+
+  isQuickDish = this.fb.control(false, [Validators.required]);
+
+
   notes = this.fb.control('');
   user: SimpleUser | null = null;
 
@@ -42,6 +46,17 @@ export class AddMenuElementBottomSheetComponent extends SubscriberContextCompone
   ngOnInit(): void {
     this.subscribeWithContext(this.repo.getUser(), it => this.user = it);
     this.courseSelection = this.getCourseSelection();
+
+    this.subscribeWithContext(this.isQuickDish.valueChanges,
+      (value: boolean) => {
+        if (value) {
+          this.courseNumber.setValue(0);
+        } else {
+          this.courseNumber.setValue(null);
+        }
+      }
+    );
+
   }
 
 
