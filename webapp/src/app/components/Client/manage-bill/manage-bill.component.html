@@ -85,7 +85,7 @@
                     {{dish.menuElement.price.toFixed(2)}}€
                     </span>
                     <span *ngIf="checkDishOwner(dish)">
-                      <button mat-icon-button color="warn" [disabled]="course.isSent || !dishRemovable(dish)" (click)="deleteDish(dish.uuid,$event)">
+                      <button mat-icon-button color="warn" [disabled]=" !dishRemovable(dish,course)" (click)="deleteDish(dish.uuid,$event)">
                       <mat-icon>delete</mat-icon></button>
                     </span>
                   </div>

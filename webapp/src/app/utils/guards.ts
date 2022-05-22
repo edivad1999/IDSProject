@@ -4,7 +4,7 @@ import {map} from 'rxjs/operators';
 import {Injectable} from '@angular/core';
 import {RepositoryService} from '../data/repository/repository.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
-import {Role, roleEquals, roleIsBigger} from '../domain/model/data';
+import {getRoleValue, Role, roleEquals} from '../domain/model/data';
 
 
 @Injectable({
@@ -73,7 +73,7 @@ export class AuthorizeRole implements CanActivate {
         return false;
 
       } else {
-        return roleIsBigger(userRole, routeRole);
+        return getRoleValue(userRole) >= getRoleValue(routeRole);
       }
     }
   }

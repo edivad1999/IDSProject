@@ -26,7 +26,10 @@
         Sicuro di aver scritto bene?
       </mat-error>
     </mat-form-field>
-    <div class="centrator-container">
+    <div  class="centrator-container">
+      <button mat-raised-button color="accent" [routerLink]="'/register'" >
+        Registrati
+      </button>
       <button (click)="login()"
               [disabled]="authState != 'UNAUTHENTICATED' || loginFormGroup.invalid"
               color="primary"

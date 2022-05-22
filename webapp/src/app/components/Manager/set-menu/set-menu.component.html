@@ -7,7 +7,7 @@
     </div>
     <div [formArrayName]="'list'">
       <div style="margin-bottom: 12px" *ngFor="let viewElement of this.currentMenuArrayList.controls; let i =index" [formGroup]="castToFormGroup(viewElement)">
-        <mat-card formGroupName="element">
+        <mat-card formGroupName="element" style="display:flex;flex-direction:column;">
           <mat-form-field>
             <mat-label>
               Nome

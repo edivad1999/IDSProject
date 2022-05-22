@@ -1,0 +1,21 @@
+<mat-list-item style="width:available ;height: auto;margin-top: 8px">
+  <div mat-line style="width: 100% ;display: flex;justify-content: space-between">
+    <p>{{dish.menuElement.name}}</p>
+    <p mat-card-subtitle>Stato: <span style="color: #323232">{{translateState(dish.state)}}</span></p>
+  </div>
+  <div mat-line mat-card-subtitle><p style="word-break: normal;white-space: normal;">Note:  {{dish.notes.length > 0 ? dish.notes : 'Nessuna nota inserita'}} </p></div>
+  <div mat-line mat-card-subtitle style="width: 100%; display: flex; justify-content: flex-end">
+    <p>
+      <button mat-button [matMenuTriggerFor]="menu">
+        {{this.selectedNewState !== null ? 'Nuovo stato: ' + this.translateState(this.selectedNewState) : 'Seleziona stato'}}
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item *ngFor="let state of getAvailableStates()" (click)="selectedNewState=state">{{translateState(state)}}</button>
+      </mat-menu>
+      <button mat-raised-button color="primary" [disabled]="selectedNewState===null" (click)="setState()">Imposta
+        <mat-icon>send</mat-icon>
+      </button>
+    </p>
+  </div>
+  <mat-divider></mat-divider>
+</mat-list-item>

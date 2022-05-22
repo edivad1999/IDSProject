@@ -58,3 +58,30 @@ fun Route.loginApi() = route("login") {
     }
 
 }
+
+fun Route.registerApi() = route("register") {
+    val db: Database by instance()
+    val digester: PasswordDigester by instance()
+    val b64: Base64Encoder by instance()
+
+    post {
+        val req = call.receive<RegisterRequest>()
+        transaction(db) {
+            UserEntity.new {
+                this.role = Role.CLIENT.name
+                this.email = b64.decodeString(req.mail)
+                this.username = b64.decodeString(req.username)
+                this.hashPass = digester.digest(b64.decodeString(req.password))
+            }
+        }
+        call.respond(HttpStatusCode.OK)
+
+    }
+}
+
+@Serializable
+data class RegisterRequest(
+    val username: String,
+    val mail: String,
+    val password: String,
+)

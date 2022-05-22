@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import {DatasourceService} from '../../core/datasource/datasource.service';
 import {Observable, of, ReplaySubject} from 'rxjs';
-import {AuthState, Bill, Course, Dish, DishState, MenuElement, Role, SimpleUser, Table} from '../../domain/model/data';
+import {AuthState, Bill, Dish, DishState, KitchenCourse, MenuElement, Role, SimpleUser, Table} from '../../domain/model/data';
 import {catchError, map, mergeMap, tap} from 'rxjs/operators';
-import {AuthTokenData} from '../requests';
+import {AuthTokenData, RegisterRequest} from '../requests';
 import {JwtHandlerService} from '../../utils/jwt-handler.service';
 
 @Injectable({
@@ -165,24 +165,24 @@ export class RepositoryService {
   }
 
   // kitchen api
-  getCourses(): Observable<Course[]> {
+  getCourses(): Observable<KitchenCourse[]> {
     return this.datasource.getCourses();
 
   }
 
-  getCoursesByTable(tableId: string): Observable<Course[]> {
+  getCoursesByTable(tableId: string): Observable<KitchenCourse[]> {
     return this.datasource.getCoursesByTable(tableId);
 
 
   }
 
-  getOpenCourses(): Observable<Course[]> {
+  getOpenCourses(): Observable<KitchenCourse[]> {
     return this.datasource.getOpenCourses();
 
 
   }
 
-  editDishState(dishId: string, newState: DishState): Observable<boolean> {
+  editDishState(dishId: string, newState: DishState): Observable<Dish> {
     return this.datasource.editDishState(dishId, newState);
 
   }
@@ -192,6 +192,14 @@ export class RepositoryService {
   }
 
   billFlow(billId: string): Observable<Bill> {
-    return this.datasource.billFlow(billId)
+    return this.datasource.billFlow(billId);
+  }
+
+  registerAccount(username: string, password: string, mail: string): Observable<boolean> {
+    const data: RegisterRequest = {
+      username: btoa(username), password: btoa(password), mail: btoa(mail)
+    };
+    return this.datasource.registerAccount(data);
+
   }
 }

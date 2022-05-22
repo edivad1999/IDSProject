@@ -110,9 +110,10 @@ fun Route.clientsApi() = route("clients") {
         get("removeDish") {
             val dishId = call.parameters["dishId"]!!.toUUID()
             transaction(db) {
-                val user = call.principal<BasePrincipal>()!!.userId
+                val user = call.principal<BasePrincipal>()!!.userId.findUser()
                 val dish = DishEntity.findById(dishId)!!
-                if (dish.relatedClient.username == user) {
+
+                if (user.getRole() >= Role.WAITER || dish.relatedClient.username == user.username) {
                     dish.delete()
                 } else {
                     throw Error("Dish ownership wrong")

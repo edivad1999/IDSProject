@@ -1,1 +1,62 @@
-<p>kitchen-home works!</p>
+<mat-tab-group>
+  <mat-tab [label]="'Portate aperte'">
+    <div *ngIf="openKitchenCourses.length===0">
+      Non ci sono portate da visualizzare
+    </div>
+    <div *ngIf="openKitchenCourses.length>0" class="grid">
+      <div *ngFor="let kitchenCourse of openKitchenCourses" style=" margin-bottom: 8px;margin-top: 8px;">
+        <mat-card style="margin: 6px">
+          <mat-card-title>
+            Portata {{kitchenCourse.course.number}}, tavolo {{kitchenCourse.tableNumber}}
+          </mat-card-title>
+          <mat-card-subtitle>
+            Inviata alle {{getDateStringFromInstant(kitchenCourse.course.sentAt!)}}
+          </mat-card-subtitle>
+          <mat-divider></mat-divider>
+          <mat-card-content style="margin-top: 24px">
+            <mat-list>
+              <div mat-subheader>Piatti:</div>
+              <div *ngFor="let dish of kitchenCourse.course.dishes">
+                <app-kitchen-dish [dish]="dish">
+                </app-kitchen-dish>
+
+              </div>
+            </mat-list>
+          </mat-card-content>
+        </mat-card>
+
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab [label]="'Tutte le portate'">
+    <div *ngIf="allKitchenCourses.length===0">
+      Non ci sono portate da visualizzare
+    </div>
+    <div *ngIf="allKitchenCourses.length>0" class="grid">
+      <div *ngFor="let kitchenCourse of allKitchenCourses" style=" margin-bottom: 8px;margin-top: 8px;">
+        <mat-card style="margin: 6px">
+          <mat-card-title>
+            Portata {{kitchenCourse.course.number}}, tavolo {{kitchenCourse.tableNumber}}
+          </mat-card-title>
+          <mat-card-subtitle>
+            Inviata alle {{getDateStringFromInstant(kitchenCourse.course.sentAt!)}}
+          </mat-card-subtitle>
+          <mat-divider></mat-divider>
+          <div style="margin-top: 24px">
+            <mat-list>
+              <div mat-subheader>Piatti:</div>
+              <div *ngFor="let dish of kitchenCourse.course.dishes">
+                <app-kitchen-dish [dish]="dish">
+                </app-kitchen-dish>
+
+              </div>
+            </mat-list>
+          </div>
+        </mat-card>
+
+      </div>
+    </div>
+
+  </mat-tab>
+
+</mat-tab-group>

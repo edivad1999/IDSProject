@@ -3,7 +3,7 @@
 </div>
 <lib-central-column *ngIf="menu">
   <div class="topButtons">
-    <button mat-raised-button (click)="startAssociation()">
+    <button mat-raised-button color='primary' (click)="startAssociation()">
       Associati ad un tavolo
 
     </button>
@@ -11,6 +11,7 @@
   </div>
 
   <div>
+    <mat-card-title style="margin-bottom: 32px"> Menù del giorno</mat-card-title>
     <div *ngFor="let element of menu" style="margin-top: 12px">
       <app-menu-readonly [menuElement]="element"></app-menu-readonly>
     </div>

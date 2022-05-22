@@ -153,4 +153,8 @@ export class Endpoints {
   billFlowUrl(billId: string, token: string): string {
     return this.buildUrl(`clients/ws/${billId}`, 'ws');
   }
+
+  registerAccount(): string {
+    return this.buildUrl('register');
+  }
 }

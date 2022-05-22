@@ -71,6 +71,7 @@ fun Application.managerModule() {
     routing {
         route("api") {
             loginApi()
+            registerApi()
             verifierJWTApi()
             clientsApi()
             waitersApi()

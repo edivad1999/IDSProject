@@ -1,0 +1,21 @@
+
+mat-form-field {
+  width: 100%;
+
+}
+
+button {
+  margin: 8px;
+  align-self: center;
+}
+
+h1 {
+  margin-top: 16px;
+  width: 100%;
+  text-align: center;
+}
+
+
+.margin-top-16px {
+  margin-top: 16px;
+}

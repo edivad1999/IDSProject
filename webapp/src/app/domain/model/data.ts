@@ -120,3 +120,9 @@ export interface MenuElement {
   price: number;
 
 }
+
+export interface KitchenCourse {
+  course: Course;
+  isBillClosed: boolean;
+  tableNumber: number;
+}

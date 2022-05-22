@@ -98,7 +98,7 @@ export class AddMenuElementBottomSheetComponent extends SubscriberContextCompone
     } else if (this.step === 'CONFIRMING') {
       const dish = this.getDish();
       if (dish) {
-        this.subscribeWithContext(this.user?.role === 'MANAGER' ?
+        this.subscribeWithContext(this.user?.role === 'CLIENT' ?
             this.repo.addToCourse(dish, this.courseNumber.value) : this.repo.waiterAddToCourse(dish, this.courseNumber.value, this.bill.id),
           response => {
             if (response) {

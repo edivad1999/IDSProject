@@ -5,6 +5,7 @@ import {Bill, CourseGrouped, Dish, DishState, SimpleUser, translateState} from '
 import {filter, map, mergeMap} from 'rxjs/operators';
 import {ActivatedRoute} from '@angular/router';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {getDateStringFromInstant} from '../../../utils/utils';
 
 export interface DishesGrouped {
   [username: string]: Dish[];
@@ -87,8 +88,7 @@ export class ManageBillComponent extends SubscriberContextComponent implements O
   }
 
   getDateStringFromInstant(instant: number): string {
-    const date = (new Date(instant));
-    return `${('0' + date.getHours()).slice(-2)}:${('0' + date.getMinutes()).slice(-2)}`;
+    return getDateStringFromInstant(instant);
   }
 
   getDishesGroupedByUsers(dishes: Dish[]): DishesGrouped {
@@ -206,11 +206,11 @@ export class ManageBillComponent extends SubscriberContextComponent implements O
     return this.expandedCourses.filter(it => it === n).length > 0;
   }
 
-  dishRemovable(dish: Dish): boolean {
+  dishRemovable(dish: Dish, course: CourseGrouped): boolean {
     if (this.user?.role !== 'CLIENT') {
       return true;
     }
 
-    return dish.state !== 'DELIVERED';
+    return !course.isSent && dish.state !== 'DELIVERED';
   }
 }

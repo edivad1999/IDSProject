@@ -4,8 +4,8 @@ import {catchError, map, mergeMap} from 'rxjs/operators';
 import {JwtHandlerService} from '../../utils/jwt-handler.service';
 import {Endpoints} from '../endpoints/endpoints';
 import {HttpClient} from '@angular/common/http';
-import {AuthTokenData, SimpleStringResponse} from '../../data/requests';
-import {Bill, Course, Dish, DishState, MenuElement, Role, SimpleUser, Table} from '../../domain/model/data';
+import {AuthTokenData, RegisterRequest, SimpleStringResponse} from '../../data/requests';
+import {Bill, Dish, DishState, KitchenCourse, MenuElement, Role, SimpleUser, Table} from '../../domain/model/data';
 import {webSocket} from 'rxjs/webSocket';
 
 
@@ -228,27 +228,23 @@ export class DatasourceService {
   }
 
   // kitchen api
-  getCourses(): Observable<Course[]> {
-    return this.httpClient.get<Course[]>(this.endpoints.getCoursesUrl());
+  getCourses(): Observable<KitchenCourse[]> {
+    return this.httpClient.get<KitchenCourse[]>(this.endpoints.getCoursesUrl());
   }
 
-  getCoursesByTable(tableId: string): Observable<Course[]> {
-    return this.httpClient.get<Course[]>(this.endpoints.getCoursesByTableUrl(tableId));
-
-  }
-
-  getOpenCourses(): Observable<Course[]> {
-    return this.httpClient.get<Course[]>(this.endpoints.getOpenCoursesUrl());
+  getCoursesByTable(tableId: string): Observable<KitchenCourse[]> {
+    return this.httpClient.get<KitchenCourse[]>(this.endpoints.getCoursesByTableUrl(tableId));
 
   }
 
-  editDishState(dishId: string, newState: DishState): Observable<boolean> {
-    return this.httpClient.post(this.endpoints.editDishStateUrl(), {dishId, newState}, {observe: 'response'}).pipe(
-      map((response) => response.status === 200),
-      catchError(err => {
-        console.error(err);
-        return of(false);
-      })
+  getOpenCourses(): Observable<KitchenCourse[]> {
+    return this.httpClient.get<KitchenCourse[]>(this.endpoints.getOpenCoursesUrl());
+
+  }
+
+  editDishState(dishId: string, newState: DishState): Observable<Dish> {
+    return this.httpClient.post<Dish>(this.endpoints.editDishStateUrl(), {dishId, newState}, {observe: 'response'}).pipe(
+      map((response) => response.body as Dish),
     );
   }
 
@@ -265,5 +261,18 @@ export class DatasourceService {
     return this.jwtHandler.token().pipe(
       mergeMap(t => webSocket<Bill>(this.endpoints.billFlowUrl(billId, t as string)))
     );
+  }
+
+  registerAccount(data: RegisterRequest): Observable<boolean> {
+    return this.httpClient.post <boolean>(
+      this.endpoints.registerAccount(), data, {observe: 'response'})
+      .pipe(
+        map((response) => response.status === 200),
+        catchError(err => {
+          console.error(err);
+          return of(false);
+        })
+      );
+
   }
 }

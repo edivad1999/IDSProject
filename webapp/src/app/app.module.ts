@@ -51,6 +51,8 @@ import {MatBottomSheet, MatBottomSheetModule} from '@angular/material/bottom-she
 import { TableOccupationComponent } from './components/Waiter/waiter-home/table-occupation/table-occupation.component';
 import { OpenBillComponent } from './components/Waiter/waiter-home/table-occupation/open-bill/open-bill.component';
 import { CloseBillComponent } from './components/Waiter/waiter-home/table-occupation/close-bill/close-bill.component';
+import { KitchenDishComponent } from './components/Kitchen/kitchen-home/kitchen-dish/kitchen-dish.component';
+import { RegisterScreenComponent } from './register-screen/register-screen.component';
 
 @NgModule({
   declarations: [
@@ -72,6 +74,8 @@ import { CloseBillComponent } from './components/Waiter/waiter-home/table-occupa
     TableOccupationComponent,
     OpenBillComponent,
     CloseBillComponent,
+    KitchenDishComponent,
+    RegisterScreenComponent,
 
   ],
   imports: [

@@ -32,6 +32,7 @@ export class AppComponent extends SubscriberContextComponent implements OnInit {
     {name: 'Home', url: '/home', needsAuthorization: true},
     {name: 'Imposta il menù', url: '/setMenu', needsAuthorization: true, role: 'MANAGER'},
     {name: 'Imposta i tavoli', url: '/setTables', needsAuthorization: true, role: 'MANAGER'},
+    {name: 'Cucina', url: '/kitchen', needsAuthorization: true, role: 'WAITER'},
     {name: 'Logout', url: '/logout', needsAuthorization: true},
 
 
