@@ -26,16 +26,33 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {MatSelectModule} from '@angular/material/select';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {CentralColumnModule} from './utils/central-column/central-column.module';
-import {MatExpansionModule} from "@angular/material/expansion";
-import {MatCheckboxModule} from "@angular/material/checkbox";
-import {HomeComponent} from './components/home/home.component';
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {HomeComponent} from './components/Common/home/home.component';
 
-import {MatStepperModule} from "@angular/material/stepper";
-import {MatTabsModule} from "@angular/material/tabs";
+import {MatStepperModule} from '@angular/material/stepper';
+import {MatTabsModule} from '@angular/material/tabs';
 
-import {MatAutocompleteModule} from "@angular/material/autocomplete";
-import {MatMenuModule} from "@angular/material/menu";
-import {MatChipsModule} from "@angular/material/chips";
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatChipsModule} from '@angular/material/chips';
+import {ManagerHomeComponent} from './components/Manager/manager-home/manager-home.component';
+import {KitchenHomeComponent} from './components/Kitchen/kitchen-home/kitchen-home.component';
+import {WaiterHomeComponent} from './components/Waiter/waiter-home/waiter-home.component';
+import {ClientHomeComponent} from './components/Client/client-home/client-home.component';
+import {SetMenuComponent} from './components/Manager/set-menu/set-menu.component';
+import {SetTablesComponent} from './components/Manager/set-tables/set-tables.component';
+import { ManageBillComponent } from './components/Client/manage-bill/manage-bill.component';
+import { MenuReadonlyComponent } from './components/Common/menu-readonly/menu-readonly.component';
+import { BillAssociationDialogComponent } from './components/Client/client-home/bill-association-dialog/bill-association-dialog.component';
+import { MenuComponent } from './components/Common/menu/menu.component';
+import { AddMenuElementBottomSheetComponent } from './components/Common/menu/add-menu-element-bottom-sheet/add-menu-element-bottom-sheet.component';
+import {MatBottomSheet, MatBottomSheetModule} from '@angular/material/bottom-sheet';
+import { TableOccupationComponent } from './components/Waiter/waiter-home/table-occupation/table-occupation.component';
+import { OpenBillComponent } from './components/Waiter/waiter-home/table-occupation/open-bill/open-bill.component';
+import { CloseBillComponent } from './components/Waiter/waiter-home/table-occupation/close-bill/close-bill.component';
+import { KitchenDishComponent } from './components/Kitchen/kitchen-home/kitchen-dish/kitchen-dish.component';
+import { RegisterScreenComponent } from './register-screen/register-screen.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +60,22 @@ import {MatChipsModule} from "@angular/material/chips";
     LoginComponent,
     LogoutComponent,
     HomeComponent,
+    ManagerHomeComponent,
+    KitchenHomeComponent,
+    WaiterHomeComponent,
+    ClientHomeComponent,
+    SetMenuComponent,
+    SetTablesComponent,
+    ManageBillComponent,
+    MenuReadonlyComponent,
+    BillAssociationDialogComponent,
+    MenuComponent,
+    AddMenuElementBottomSheetComponent,
+    TableOccupationComponent,
+    OpenBillComponent,
+    CloseBillComponent,
+    KitchenDishComponent,
+    RegisterScreenComponent,
 
   ],
   imports: [
@@ -75,7 +108,9 @@ import {MatChipsModule} from "@angular/material/chips";
     MatTabsModule,
     MatAutocompleteModule,
     MatMenuModule,
-    MatChipsModule
+    MatChipsModule,
+    MatListModule,
+    MatBottomSheetModule,
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
   ],

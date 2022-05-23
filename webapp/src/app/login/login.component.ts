@@ -1,10 +1,10 @@
 import {Component, EventEmitter, OnInit, Output, SimpleChanges} from '@angular/core';
-import {AuthState} from "../domain/model/data";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {SubscriberContextComponent} from "../utils/subscriber-context.component";
-import {RepositoryService} from "../data/repository/repository.service";
-import {ActivatedRoute, Router} from "@angular/router";
-import {MatSnackBar} from "@angular/material/snack-bar";
+import {AuthState} from '../domain/model/data';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {SubscriberContextComponent} from '../utils/subscriber-context.component';
+import {RepositoryService} from '../data/repository/repository.service';
+import {ActivatedRoute, Router} from '@angular/router';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
@@ -49,6 +49,7 @@ export class LoginComponent extends SubscriberContextComponent implements OnInit
 
   }
 
+  // tslint:disable-next-line:use-lifecycle-interface
   ngOnChanges(changes: SimpleChanges): void {
     if ('username' in changes) {
       this.usernameControl.setValue(changes.username.currentValue);
@@ -59,11 +60,11 @@ export class LoginComponent extends SubscriberContextComponent implements OnInit
     this.subscribeWithContext(this.api.loginWithEmailAndPassword(this.usernameControl.value, this.passwordControl.value),
       response => {
         if (!response) {
-          this.snackBar.open('Errore nel login', 'chiudi')
+          this.snackBar.open('Errore nel login', 'chiudi');
         } else {
-          this.router.navigate(['home'])
+          this.router.navigate(['home']);
         }
-      })
+      });
 
 
   }

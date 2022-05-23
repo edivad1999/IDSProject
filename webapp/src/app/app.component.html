@@ -10,7 +10,7 @@
       <div class="cont" *ngFor="let toDisplay of displayedItems; let last=last">
 
         <mat-list-item [routerLink]="toDisplay.url" matRipple
-                       *ngIf="this.isAuthenticated===toDisplay.needsAuthorization">
+                       *ngIf="this.isAuthenticated===toDisplay.needsAuthorization &&   this.authorize(this.role,toDisplay.role)">
           {{toDisplay.name}}
           <mat-divider *ngIf="!last"></mat-divider>
         </mat-list-item>

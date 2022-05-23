@@ -1,0 +1,33 @@
+<lib-central-column>
+  <mat-card style="margin-bottom: 12px">
+    <mat-card-title>
+      Inserisci il numero massimo di tavoli
+    </mat-card-title>
+    <mat-card-content>
+      <mat-form-field>
+        <mat-label>
+          Tavoli
+        </mat-label>
+        <input matInput type="number" min="0" [formControl]="input">
+        <mat-error>
+          Il campo non è valido
+        </mat-error>
+      </mat-form-field>
+
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button mat-raised-button [routerLink]="'/home'" color="warn">Esci senza salvare</button>
+      <button mat-raised-button color="primary" (click)="save()" [disabled]="this.input.invalid">Salva</button>
+    </mat-card-actions>
+  </mat-card>
+  <mat-card>
+    <mat-card-title>Tavoli presenti</mat-card-title>
+
+    <div style="display: flex ;flex-direction: column">
+      <div *ngFor="let table of tables">
+        Tavolo numero {{table.number}}, {{table.isOccupied ? "Occupato" : "Non occupato"}}
+      </div>
+
+    </div>
+  </mat-card>
+</lib-central-column>

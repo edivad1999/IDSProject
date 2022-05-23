@@ -1,0 +1,34 @@
+<h1>Registrati</h1>
+<div class="form" style="width: 100%; display: flex; flex-direction: column; align-items: center" [formGroup]="form">
+  <div>
+    <mat-form-field appearance="outline">
+      <mat-label>Username</mat-label>
+      <input matInput formControlName="username">
+      <mat-error>
+        Il campo non può essere nullo
+      </mat-error>
+    </mat-form-field>
+  </div>
+  <div>
+    <mat-form-field appearance="outline">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="mail">
+      <mat-error>
+        Il campo non può essere nullo
+      </mat-error>
+    </mat-form-field>
+  </div>
+  <div>
+    <mat-form-field appearance="outline">
+      <mat-label>Password</mat-label>
+      <input type="password" matInput formControlName="password">
+      <mat-error>
+        Il campo deve avere almeno 6 caratteri
+      </mat-error>
+    </mat-form-field>
+  </div>
+  <div>
+    <button mat-raised-button color="primary" [disabled]= "this.form.invalid" (click)="register()">Registrati</button>
+  </div>
+</div>
+

@@ -7,7 +7,7 @@ import {Component, Input} from '@angular/core';
 })
 export class CentralColumnComponent {
   @Input()
-  stretchWidth = false;
+  stretchWidth = true;
   @Input()
   hasSmallBorders = false;
 }

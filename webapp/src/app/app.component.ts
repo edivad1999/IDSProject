@@ -2,11 +2,14 @@ import {Component, HostListener, OnInit, ViewChild} from '@angular/core';
 import {SubscriberContextComponent} from './utils/subscriber-context.component';
 import {MatDrawer, MatDrawerMode} from '@angular/material/sidenav';
 import {RepositoryService} from './data/repository/repository.service';
+import {getRoleValue, Role} from './domain/model/data';
 
 interface ListItem {
   name: string;
   url: string;
-  needsAuthorization: boolean
+  needsAuthorization: boolean;
+  role?: Role;
+
 }
 
 
@@ -16,7 +19,7 @@ interface ListItem {
   styleUrls: ['./app.component.css']
 })
 export class AppComponent extends SubscriberContextComponent implements OnInit {
-
+  role: Role | null = null;
   title = 'webapp';
   sidenavMode: MatDrawerMode = 'side';
   startOpened: boolean = window.innerWidth >= 916;
@@ -27,7 +30,11 @@ export class AppComponent extends SubscriberContextComponent implements OnInit {
   displayedItems: ListItem[] = [
     {name: 'Login', url: '/login', needsAuthorization: false},
     {name: 'Home', url: '/home', needsAuthorization: true},
+    {name: 'Imposta il menù', url: '/setMenu', needsAuthorization: true, role: 'MANAGER'},
+    {name: 'Imposta i tavoli', url: '/setTables', needsAuthorization: true, role: 'MANAGER'},
+    {name: 'Cucina', url: '/kitchen', needsAuthorization: true, role: 'WAITER'},
     {name: 'Logout', url: '/logout', needsAuthorization: true},
+
 
   ];
   isLoadingBarShown = false;
@@ -52,9 +59,34 @@ export class AppComponent extends SubscriberContextComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.subscribeWithContext(
+      this.repo.whoAmI(),
+      role => {
+        this.role = role;
+      }
+    );
+    this.repo.role.subscribe(
+      role => this.role = role
+    );
     this.setSidenavMode(window.innerWidth);
     this.repo.authenticationStateFlow.subscribe(authState => {
       authState === 'AUTHENTICATED' ? this.isAuthenticated = true : this.isAuthenticated = false;
     });
+
   }
+
+  authorize(userRole: Role | null, routeRole?: Role): boolean {
+
+    if (routeRole === undefined) {
+      return true;
+    } else {
+      if (userRole === null) {
+        return false;
+
+      } else {
+        return getRoleValue(userRole) >= getRoleValue(routeRole);
+      }
+    }
+  }
+
 }

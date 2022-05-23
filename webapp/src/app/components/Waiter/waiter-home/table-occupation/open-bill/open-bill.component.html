@@ -1,0 +1,33 @@
+<mat-toolbar color="accent">
+  Stai aprendo un conto sul tavolo {{data.number}}
+</mat-toolbar>
+<div style="padding: 24px">
+  <div style="width: 100%;height: 100%;display: flex;flex-direction: column;justify-content: space-between">
+    <div>
+      <mat-form-field *ngIf="secretCode===null">
+        <mat-label>
+          Numero di coperti
+        </mat-label>
+        <input matInput type="number" [formControl]="coveredNumbers">
+        <mat-error>
+          Il campo non può essere vuoto
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div>
+      <mat-card-title *ngIf="secretCode!==null" style="">
+        <mat-icon style="margin-right: 6px">pin</mat-icon>
+        {{secretCode}}
+      </mat-card-title>
+    </div>
+    <div style="display: flex; width:100%; justify-content: end">
+
+      <button mat-raised-button (click)="this.dialogRef.close()" style="margin-right: 12px" color="warn">Chiudi</button>
+      <button *ngIf="secretCode===null" mat-raised-button (click)="openBill()" color="primary">
+        Conferma
+      </button>
+
+    </div>
+  </div>
+
+</div>

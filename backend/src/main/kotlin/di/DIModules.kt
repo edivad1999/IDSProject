@@ -1,11 +1,15 @@
 package di
 
+import com.thedeanda.lorem.Lorem
+import com.thedeanda.lorem.LoremIpsum
 import di.serializers.DayOfWeekSerializer
 import di.serializers.InstantSerializer
 import di.serializers.LocalTimeSerializer
+import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
+import model.dataClasses.Bill
 import org.jetbrains.exposed.sql.Database
 import org.kodein.di.DI
 import org.kodein.di.bind
@@ -35,6 +39,9 @@ object DIModules {
                 }
 
             }
+            bind<Lorem>() with singleton {
+                LoremIpsum.getInstance()
+            }
 
             bind<Base64Encoder>() with singleton { JavaBase64Encoder() }
         }
@@ -47,7 +54,7 @@ object DIModules {
                     val username: String = dbUri.userInfo.split(":")[0]
                     val password: String = dbUri.userInfo.split(":")[1]
                     val dbUrl = "jdbc:postgresql://" + dbUri.host + ':' + dbUri.port + dbUri.path
-                    Database.connect(dbUrl, driver = "org.postgresql.Driver",user=username, password=password)
+                    Database.connect(dbUrl, driver = "org.postgresql.Driver", user = username, password = password)
 
 
                 } else {

@@ -1,0 +1,21 @@
+<lib-central-column>
+  <div *ngIf="myRole!==null">
+
+    <ng-container *ngIf="isManager(myRole)===true">
+      <app-manager-home></app-manager-home>
+    </ng-container>
+    <ng-container *ngIf="isClient(myRole)===true">
+      <app-client-home></app-client-home>
+    </ng-container>
+    <ng-container *ngIf="isKitchen(myRole)===true">
+      <app-kitchen-home></app-kitchen-home>
+    </ng-container>
+    <ng-container *ngIf="isWaiter(myRole)===true">
+      <app-waiter-home></app-waiter-home>
+    </ng-container>
+
+  </div>
+  <div *ngIf="myRole===null">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+</lib-central-column>

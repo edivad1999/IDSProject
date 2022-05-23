@@ -37,7 +37,7 @@ repositories {
 }
 buildscript {
     repositories {
-        mavenCentral();
+        mavenCentral()
     }
 
     dependencies {
@@ -74,6 +74,7 @@ dependencies {
     //ktor
     api("io.ktor", "ktor-serialization", ktorVersion)
     implementation("io.ktor:ktor-server-cio:$ktorVersion")
+    implementation("io.ktor:ktor-websockets:$ktorVersion")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("io.ktor:ktor-client-apache:$ktorVersion")
     implementation("io.ktor:ktor-auth:$ktorVersion")
@@ -98,19 +99,22 @@ dependencies {
     //others utils
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.2.1")
 
+    //Mock data
+    implementation("com.thedeanda", "lorem", loremVersion)
+
 
     //tests
     testImplementation(kotlin("test-junit5"))
     testImplementation("org.junit.jupiter", "junit-jupiter-api", jupyterVersion)
     testImplementation("org.junit.jupiter", "junit-jupiter-engine", jupyterVersion)
-    testImplementation("com.thedeanda", "lorem", loremVersion)
+
 }
 
 tasks.test {
     useJUnitPlatform()
 }
 
-tasks.withType<KotlinCompile>() {
+tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
 }
 tasks.create("stage") {

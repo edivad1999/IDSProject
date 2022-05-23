@@ -1,0 +1,27 @@
+<lib-central-column>
+  <div *ngIf="menu">
+    <div *ngFor="let menuElement of menu" style="margin-bottom: 12px">
+      <mat-card (click)="addToBill(menuElement)" matRipple>
+        <div style="display: flex ;align-items: baseline; justify-content: space-between">
+          <span style="margin-right: 12px">
+            {{this.menuElement.name}}
+          </span>
+          <mat-card-subtitle>
+            {{this.menuElement.ingredients}}
+          </mat-card-subtitle>
+          <button mat-raised-button color="primary" [disableRipple]="true">Aggiungi</button>
+        </div>
+        <mat-divider></mat-divider>
+        <mat-card-subtitle style="margin-top: 15px">
+          {{this.menuElement.description}}
+        </mat-card-subtitle>
+        <mat-divider>
+        </mat-divider>
+        <div style="margin-top: 30px; width: 100%;display: flex; justify-content: end">
+          <div>Prezzo: {{menuElement.price}}€</div>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+
+</lib-central-column>

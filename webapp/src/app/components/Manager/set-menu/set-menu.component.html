@@ -1,0 +1,83 @@
+<lib-central-column>
+  <div [formGroup]="formGroupContainer">
+    <div style="width: 100%; display: flex; justify-content: end; margin-bottom: 12px">
+      <button style="margin-right: 12px" mat-raised-button color="warn" [routerLink]="'/home'">Esci senza salvare</button>
+      <button mat-raised-button color="primary" [disabled]="isFormInvalid()" (click)="saveMenu()">Salva tutto</button>
+
+    </div>
+    <div [formArrayName]="'list'">
+      <div style="margin-bottom: 12px" *ngFor="let viewElement of this.currentMenuArrayList.controls; let i =index" [formGroup]="castToFormGroup(viewElement)">
+        <mat-card formGroupName="element" style="display:flex;flex-direction:column;">
+          <mat-form-field>
+            <mat-label>
+              Nome
+            </mat-label>
+            <input matInput formControlName="name" [value]="viewElement.value.element.name" required>
+            <mat-error>Il campo non è valido</mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>
+              Ingredienti
+            </mat-label>
+            <input matInput formControlName="ingredients" [value]="viewElement.value.element.ingredients" required>
+            <mat-error>Il campo non è valido</mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>
+              Descrizione
+            </mat-label>
+            <input matInput formControlName="description" [value]="viewElement.value.element.description" required>
+            <mat-error>Il campo non è valido</mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>
+              Prezzo
+            </mat-label>
+            <input matInput formControlName="price" [value]="viewElement.value.element.price" type="number" min="0" step=".01">
+            <mat-error>Il campo non è valido</mat-error>
+          </mat-form-field>
+          <span>
+
+            <button style="margin-right: 12px" color="warn" mat-icon-button (click)="currentMenuArrayList.removeAt(i)"><mat-icon>delete</mat-icon></button>
+            <button mat-icon-button *ngIf="viewElement.enabled" color="primary" (click)="viewElement.disable()"><mat-icon>save</mat-icon></button>
+            <button mat-icon-button *ngIf="!viewElement.enabled" color="accent" (click)="viewElement.enable()"><mat-icon>edit</mat-icon></button>
+          </span>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+  <mat-card [formGroup]="creatingElement">
+    <mat-card-title>Aggiungi nuovo</mat-card-title>
+    <mat-form-field>
+      <mat-label>
+        Nome
+      </mat-label>
+      <input matInput formControlName="name" required>
+      <mat-error>Il campo non è valido</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>
+        Ingredienti
+      </mat-label>
+      <input matInput formControlName="ingredients" required>
+      <mat-error>Il campo non è valido</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>
+        Descrizione
+      </mat-label>
+      <input matInput formControlName="description" required>
+      <mat-error>Il campo non è valido</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>
+        Prezzo
+      </mat-label>
+      <input matInput formControlName="price" type="number" min="0" step=".01">
+      <mat-error>Il campo non è valido</mat-error>
+    </mat-form-field>
+    <mat-card-actions align="end">
+      <button mat-button [disabled]="creatingElement.invalid" (click)="addCreating()">Aggiungi</button>
+    </mat-card-actions>
+  </mat-card>
+</lib-central-column>

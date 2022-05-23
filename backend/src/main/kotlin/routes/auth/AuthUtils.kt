@@ -5,8 +5,8 @@ import io.ktor.auth.*
 import io.ktor.auth.jwt.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.toJavaInstant
-import model.dao.UserAuth
-import model.tables.UserAuthTable
+import model.dao.UserEntity
+import model.tables.UsersTable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.kodein.di.DI
@@ -59,8 +59,8 @@ class MyJWTCredentialVerifier(override val di: DI) : JWTCredentialsVerifier, DIA
         if (expiresAt.isBefore(Clock.System.now().toJavaInstant())) return null
         val db: Database by instance()
         val user = transaction(db) {
-            UserAuth.find {
-                UserAuthTable.username eq username
+            UserEntity.find {
+                UsersTable.username eq username
             }.firstOrNull()
         }
         return if (user == null) null else BasePrincipal(user.username, role)
@@ -69,7 +69,7 @@ class MyJWTCredentialVerifier(override val di: DI) : JWTCredentialsVerifier, DIA
 }
 
 enum class Role {
-    USER, ADMIN
+    CLIENT, KITCHEN, WAITER, MANAGER
 }
 
 data class BasePrincipal(val userId: String, val role: Role) : Principal
