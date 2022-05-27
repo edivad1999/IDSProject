@@ -16,8 +16,9 @@ export class Endpoints {
     if (document.location.hostname.startsWith('192')) {
       this.hostname = document.location.hostname;
     } else if (document.location.hostname !== 'localhost') {
-      // this.hostname = Insert backend url
+      this.hostname = 'ids-restaurant-backend.herokuapp.com';
       this.httpProtocol = 'https';
+      this.wsProtocol = 'wss';
       this.port = 80;
 
     }
