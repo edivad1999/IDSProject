@@ -37,10 +37,7 @@ fun Route.loginApi() = route("login") {
         }
         var failureReason = "username not found"
         val token = transaction(db) {
-            UserEntity.find { UsersTable.username eq email }
-                .limit(1)
-                .firstOrNull()
-                ?.let {
+            UserEntity.find { UsersTable.username eq email }.limit(1).firstOrNull()?.let {
                     if (it.hashPass == digester.digest(password)) {
                         JwtConfig.makeToken(it)
                     } else {
@@ -65,10 +62,13 @@ fun Route.registerApi() = route("register") {
     val b64: Base64Encoder by instance()
 
     post {
+        val role: Role = call.parameters["role"]?.let {
+            Role.valueOf(it)
+        } ?: Role.CLIENT
         val req = call.receive<RegisterRequest>()
         transaction(db) {
             UserEntity.new {
-                this.role = Role.CLIENT.name
+                this.role = role.name
                 this.email = b64.decodeString(req.mail)
                 this.username = b64.decodeString(req.username)
                 this.hashPass = digester.digest(b64.decodeString(req.password))
