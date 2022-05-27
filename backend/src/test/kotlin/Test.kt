@@ -1,51 +1,36 @@
-import di.DIModules
-import io.ktor.application.*
-import io.ktor.features.*
-import io.ktor.http.*
-import io.ktor.serialization.*
-import io.ktor.server.testing.*
-import junit.framework.TestCase.assertEquals
 import model.tables.*
-import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.BeforeAll
-
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-
-
-import org.kodein.di.DI
-import org.kodein.di.DIAware
-import org.kodein.di.instance
-import org.kodein.di.ktor.KodeinDISession
+import routes.auth.Role
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ApplicationTest() {
-    val db: Database by instance()
-
-    val di:DI()
+class UnauthenticatedRoutesTest() {
 
     @BeforeAll
     fun setupTestingEnvironment() {
-        transaction(db) {
-            SchemaUtils.createMissingTablesAndColumns(UsersTable)
-            SchemaUtils.createMissingTablesAndColumns(BillsTable)
-            SchemaUtils.createMissingTablesAndColumns(UsersBillsTable)
-            SchemaUtils.createMissingTablesAndColumns(TablesTable)
-            SchemaUtils.createMissingTablesAndColumns(CoursesTable)
-            SchemaUtils.createMissingTablesAndColumns(DishesTable)
-            SchemaUtils.createMissingTablesAndColumns(MenuElementTable)
+        testWithApplicationContext { db ->
+            transaction(db) {
+                SchemaUtils.drop(MenuElementTable, TablesTable, UsersBillsTable, BillsTable, CoursesTable, DishesTable, UsersTable, inBatch = false)
+                SchemaUtils.createMissingTablesAndColumns(UsersTable)
+                SchemaUtils.createMissingTablesAndColumns(BillsTable)
+                SchemaUtils.createMissingTablesAndColumns(UsersBillsTable)
+                SchemaUtils.createMissingTablesAndColumns(TablesTable)
+                SchemaUtils.createMissingTablesAndColumns(CoursesTable)
+                SchemaUtils.createMissingTablesAndColumns(DishesTable)
+                SchemaUtils.createMissingTablesAndColumns(MenuElementTable)
+            }
         }
+
     }
 
     @Test
-    fun testRoot() {
-        withTestApplication(Application::managerModule) {
-            handleRequest(HttpMethod.Get, "/").apply {
-                assertEquals(HttpStatusCode.OK, response.status())
-                assertEquals("Hello, world!", response.content)
-            }
-        }
+    fun testLogin() {
+        assumeTrue(createMockUser("test", "test", "test@test.test", Role.CLIENT))
     }
 }
+
+

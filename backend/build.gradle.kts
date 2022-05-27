@@ -82,6 +82,7 @@ dependencies {
     implementation("io.ktor:ktor-auth-jwt:$ktorVersion")
     testImplementation("io.ktor:ktor-server-tests:$ktorVersion")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
+    implementation ("io.ktor:ktor-client-serialization:$ktorVersion")
 
     //exposed DAO
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
