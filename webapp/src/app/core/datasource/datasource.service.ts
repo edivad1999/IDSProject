@@ -275,4 +275,10 @@ export class DatasourceService {
       );
 
   }
+
+  getLog(): Observable<string[]> {
+   return  this.httpClient.get(this.endpoints.getLog(), {observe: 'response'}).pipe(
+      map(it => it.body as string[])
+    );
+  }
 }

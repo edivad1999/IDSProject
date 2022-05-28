@@ -1,18 +1,13 @@
 package routes.auth
 
-import com.auth0.jwt.interfaces.JWTVerifier
-import instance
-import io.ktor.application.*
 import io.ktor.auth.*
-import io.ktor.http.cio.websocket.*
 import io.ktor.routing.*
-import io.ktor.util.*
-import io.ktor.websocket.*
-import kotlinx.datetime.Clock
-import kotlinx.datetime.toKotlinInstant
 import kotlinx.serialization.Serializable
-import org.kodein.di.instance
-import org.kodein.di.ktor.di
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.Transaction
+import org.jetbrains.exposed.sql.transactions.transaction
+import java.io.File
+import java.time.Instant
 
 @Serializable
 data class ErrorMessageResponse(val error: String)
@@ -20,5 +15,28 @@ data class ErrorMessageResponse(val error: String)
 fun Route.authenticate(role: Role, optional: Boolean = false, build: Route.() -> Unit) =
     authenticate(role.name, optional = optional, build = build)
 
+data class LogLine(
+    val timestamp: Instant,
+    val role: Role,
+    val username: String,
+    val operation: String,
+    val severity: String = "Default",
+) {
+    override fun toString(): String {
+        return "$timestamp | $role | $username | $operation | $severity | \n"
+    }
+}
+
+inline fun <T> loggedTransaction(
+    db: Database,
+    logFile: File,
+    line: LogLine,
+    crossinline statement: Transaction.() -> T,
+): T {
+    logFile.appendText(line.toString())
+    return transaction(db) {
+        statement()
+    }
+}
 
 

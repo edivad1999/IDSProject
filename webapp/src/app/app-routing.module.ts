@@ -10,6 +10,7 @@ import {ManageBillComponent} from './components/Client/manage-bill/manage-bill.c
 import {MenuComponent} from './components/Common/menu/menu.component';
 import {KitchenHomeComponent} from './components/Kitchen/kitchen-home/kitchen-home.component';
 import {RegisterScreenComponent} from './register-screen/register-screen.component';
+import {ViewLogComponent} from './components/Manager/view-log/view-log.component';
 
 
 const routes: Routes = [
@@ -19,6 +20,7 @@ const routes: Routes = [
   {path: 'logout', component: LogoutComponent, canActivate: [AuthGuard]},
   {path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
   {path: 'setMenu', component: SetMenuComponent, canActivate: [AuthGuard, AuthorizeRole], data: {role: 'MANAGER'}},
+  {path: 'viewLog', component: ViewLogComponent, canActivate: [AuthGuard, AuthorizeRole], data: {role: 'MANAGER'}},
   {path: 'setTables', component: SetTablesComponent, canActivate: [AuthGuard, AuthorizeRole], data: {role: 'MANAGER'}},
   {path: 'bill', component: ManageBillComponent, canActivate: [AuthGuard, AuthorizeExactlyRole], data: {role: 'CLIENT'}},
   {path: 'bill/:idBill', component: ManageBillComponent, canActivate: [AuthGuard, AuthorizeRole], data: {role: 'CLIENT'}},
