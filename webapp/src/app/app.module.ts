@@ -53,6 +53,7 @@ import { OpenBillComponent } from './components/Waiter/waiter-home/table-occupat
 import { CloseBillComponent } from './components/Waiter/waiter-home/table-occupation/close-bill/close-bill.component';
 import { KitchenDishComponent } from './components/Kitchen/kitchen-home/kitchen-dish/kitchen-dish.component';
 import { RegisterScreenComponent } from './register-screen/register-screen.component';
+import { ViewLogComponent } from './components/Manager/view-log/view-log.component';
 
 @NgModule({
   declarations: [
@@ -76,6 +77,7 @@ import { RegisterScreenComponent } from './register-screen/register-screen.compo
     CloseBillComponent,
     KitchenDishComponent,
     RegisterScreenComponent,
+    ViewLogComponent,
 
   ],
   imports: [

@@ -117,7 +117,6 @@ class AuthenticatedTests() {
 
     @Test
     fun testKitchenCourses() {
-        val billId = getBillId(tokenWaiter)
         runBlocking {
             assert(runCatching {
                 provideClient(tokenWaiter).get<List<KitchenCourse>>(buildUrl("/kitchen/openCourses"))

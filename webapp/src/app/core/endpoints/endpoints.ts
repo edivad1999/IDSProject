@@ -158,4 +158,8 @@ export class Endpoints {
   registerAccount(): string {
     return this.buildUrl('register');
   }
+
+  getLog(): string {
+    return this.buildUrl('manager/log');
+  }
 }

@@ -202,4 +202,8 @@ export class RepositoryService {
     return this.datasource.registerAccount(data);
 
   }
+
+  getLog(): Observable<string[]> {
+    return this.datasource.getLog();
+  }
 }

@@ -19,16 +19,19 @@ import model.dataClasses.Dish
 import model.tables.BillsTable
 import model.tables.UsersTable
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.transactions.transaction
-import routes.auth.BasePrincipal
-import routes.auth.Role
-import routes.auth.authenticate
+import routes.auth.*
+import java.io.File
+import java.time.Instant
 
 fun Route.clientsApi() = route("clients") {
     val db: Database by instance()
+    val log: File by instance()
     authenticate(Role.CLIENT) {
         get("whoAmI") {
-            call.respond(transaction(db) {
+
+            call.respond(loggedTransaction(db,
+                log,
+                line = LogLine(timestamp = Instant.now(), role = call.principal<BasePrincipal>()!!.role, username = call.principal<BasePrincipal>()!!.userId, operation = call.url { })) {
                 val user = UserEntity.find { UsersTable.username eq call.principal<BasePrincipal>()!!.userId }.firstOrNull()
                 if (user != null) {
                     SimpleStringResponse(user.role)
@@ -37,21 +40,21 @@ fun Route.clientsApi() = route("clients") {
 
         }
         get("user") {
-            call.respond(transaction(db) {
+            call.respond(loggedTransaction(db, log, line =  LogLine(timestamp = Instant.now(), role = call.principal<BasePrincipal>()!!.role, username = call.principal<BasePrincipal>()!!.userId, operation = call.url { })) {
                 call.principal<BasePrincipal>()!!.userId.findUser().simpleSerialize()
             })
 
         }
         get("getBill") {
             val username = call.principal<BasePrincipal>()!!.userId
-            val response = transaction(db) {
+            val response = loggedTransaction(db, log, line =  LogLine(timestamp = Instant.now(), role = call.principal<BasePrincipal>()!!.role, username = call.principal<BasePrincipal>()!!.userId, operation = call.url { })) {
                 UserEntity.find { UsersTable.username eq username }.firstOrNull()!!.getCurrentOpenBill(null)?.serialize()
             } ?: HttpStatusCode.BadRequest
             call.respond(response)
         }
         post("joinTable") {
             val req = call.receive<BillJoinRequest>()
-            val res = transaction(db) {
+            val res = loggedTransaction(db, log, line =  LogLine(timestamp = Instant.now(), role = call.principal<BasePrincipal>()!!.role, username = call.principal<BasePrincipal>()!!.userId, operation = call.url { })) {
                 val id = UserEntity.find { UsersTable.username eq call.principal<BasePrincipal>()!!.userId }.first().id.value
                 val bill = BillEntity.find {
                     BillsTable.closedAt.isNull()
@@ -65,14 +68,14 @@ fun Route.clientsApi() = route("clients") {
             call.respond(res)
         }
         get("getMenu") {
-            call.respond(transaction(db) {
+            call.respond(loggedTransaction(db, log, line =  LogLine(timestamp = Instant.now(), role = call.principal<BasePrincipal>()!!.role, username = call.principal<BasePrincipal>()!!.userId, operation = call.url { })) {
                 MenuElementEntity.all().filter { it.isCurrentlyActive }.map { it.serialize() }
             })
         }
         post("editDish") {
             val toEditDish = call.receive<EditDishRequest>()
             val newDish = toEditDish.editedDish
-            call.respond(transaction(db) {
+            call.respond(loggedTransaction(db, log, line =  LogLine(timestamp = Instant.now(), role = call.principal<BasePrincipal>()!!.role, username = call.principal<BasePrincipal>()!!.userId, operation = call.url { })) {
                 DishEntity.findById(toEditDish.toEditId.toUUID())!!.apply {
                     this.menuElement = MenuElementEntity.findById(newDish.menuElement.uuid.toUUID())!!
                     this.notes = newDish.notes
@@ -84,7 +87,7 @@ fun Route.clientsApi() = route("clients") {
         post("addToCourse") {
             val request = call.receive<AddToCourseRequest>()
             val userId = call.principal<BasePrincipal>()!!.userId
-            val res = transaction(db) {
+            val res = loggedTransaction(db, log, line =  LogLine(timestamp = Instant.now(), role = call.principal<BasePrincipal>()!!.role, username = call.principal<BasePrincipal>()!!.userId, operation = call.url { })) {
                 val user = userId.findUser()
                 user.getCurrentOpenBill()!!.let { bill ->
                     val course = bill.courses.firstOrNull { it.number == request.courseNumber } ?: CourseEntity.new {
@@ -109,7 +112,7 @@ fun Route.clientsApi() = route("clients") {
         }
         get("removeDish") {
             val dishId = call.parameters["dishId"]!!.toUUID()
-            transaction(db) {
+            loggedTransaction(db, log, line =  LogLine(timestamp = Instant.now(), role = call.principal<BasePrincipal>()!!.role, username = call.principal<BasePrincipal>()!!.userId, operation = call.url { })) {
                 val user = call.principal<BasePrincipal>()!!.userId.findUser()
                 val dish = DishEntity.findById(dishId)!!
 
@@ -123,7 +126,7 @@ fun Route.clientsApi() = route("clients") {
         }
         get("setReady") {
             val courseId = call.parameters["courseId"]!!.toUUID()
-            transaction(db) {
+            loggedTransaction(db, log, line =  LogLine(timestamp = Instant.now(), role = call.principal<BasePrincipal>()!!.role, username = call.principal<BasePrincipal>()!!.userId, operation = call.url { })) {
                 val user = call.principal<BasePrincipal>()!!.userId.findUser()
                 if (user.getRole() > Role.CLIENT) throw Error("Wrong Role")
                 else {
@@ -141,7 +144,7 @@ fun Route.clientsApi() = route("clients") {
             while (true) {
                 delay(2000)
 
-                val bill = transaction(db) {
+                val bill = loggedTransaction(db, log, line =  LogLine(timestamp = Instant.now(), role = call.principal<BasePrincipal>()!!.role, username = call.principal<BasePrincipal>()!!.userId, operation = call.url { })) {
                     BillEntity.findById(billId.toUUID())?.serialize()
                 }
                 if (bill?.users?.map { it.username }?.contains(call.principal<BasePrincipal>()?.userId) == true) {
