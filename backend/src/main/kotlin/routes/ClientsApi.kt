@@ -11,6 +11,7 @@ import io.ktor.routing.*
 import io.ktor.util.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -141,7 +142,7 @@ fun Route.clientsApi() = route("clients") {
         webSocket("{billId}") {
             val billId: String by call.parameters
             val json: Json by instance()
-            while (true) {
+            while (this.isActive) {
                 delay(2000)
 
                 val bill = loggedTransaction(db, log, line =  LogLine(timestamp = Instant.now(), role = call.principal<BasePrincipal>()!!.role, username = call.principal<BasePrincipal>()!!.userId, operation = call.url { })) {
